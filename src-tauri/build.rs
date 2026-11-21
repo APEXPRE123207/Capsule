@@ -30,6 +30,6 @@ fn main() {
         println!("cargo:rustc-link-arg=/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'");
         // Tauri already supplies the desktop manifest in resource.lib. Keep that
         // resource instead of generating a second resource with the same ID.
-        println!("cargo:rustc-link-arg-bin=eisland=/MANIFEST:NO");
+        println!("cargo:rustc-link-arg-bin=capsule=/MANIFEST:NO");
     }
 }

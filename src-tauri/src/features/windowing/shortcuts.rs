@@ -221,7 +221,7 @@ pub fn shortcut_action(app: &AppHandle, pressed: &str) -> Result<()> {
             Ok(())
         }
         Some("toggle-tray-hotkey") => {
-            let tray = app.tray_by_id("eisland").ok_or("Tray unavailable")?;
+            let tray = app.tray_by_id("capsule").ok_or("Tray unavailable")?;
             let visible = app
                 .state::<Desktop>()
                 .store
