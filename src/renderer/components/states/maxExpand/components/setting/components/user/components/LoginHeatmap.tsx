@@ -26,7 +26,7 @@
 
 import { useEffect, useMemo, useRef, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { buildHeatmapMonths, HEATMAP_MONTH_KEYS } from '../../../../cli/utils/heatmapGrid';
+import { buildHeatmapMonths, HEATMAP_MONTH_KEYS } from '../utils/heatmapGrid';
 
 interface LoginHeatmapProps {
   /** 登录日期键集合（`年-月-日`） */
