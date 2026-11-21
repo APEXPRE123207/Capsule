@@ -32,7 +32,7 @@ import { StandaloneWindowViewport } from './components/StandaloneWindowViewport'
 import { useStandaloneWindowShell } from './hooks/useStandaloneWindowShell';
 import { TAB_LIST } from './config/standaloneWindowConfig';
 import useIslandStore from '../store/slices';
-import windowIcon from '../../../resources/icon/eisland.svg';
+import windowIcon from '../../../resources/icon/capsule_logo.png';
 
 /**
  * 独立窗口根组件

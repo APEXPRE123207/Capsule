@@ -38,8 +38,6 @@ import { ThemeStep } from './components/DynamicIslandGuidePages/theme';
 import { ShapeStep } from './components/DynamicIslandGuidePages/shape';
 import { LyricModeStep } from './components/DynamicIslandGuidePages/lyric-mode';
 import { UpdateStep } from './components/DynamicIslandGuidePages/update';
-import { GithubStep } from './components/DynamicIslandGuidePages/github';
-import { SponsorStep } from './components/DynamicIslandGuidePages/sponsors';
 import { WelcomeStep } from './components/DynamicIslandGuidePages/welcome';
 import { ProcessIndicator } from './components/DynamicIslandProcessIndicator';
 import { useSmtcAccentColor } from './components/DynamicIslandGuidePages/smtc-test/hooks/useSmtcAccentColor';
@@ -111,9 +109,9 @@ function GuideApp(): ReactElement {
     setStep('shape');
   }, []);
 
-  /** 更新源配置完成，进入开源信息 */
+  /** 更新源配置完成，进入欢迎页 */
   const handleUpdateNext = useCallback((): void => {
-    setStep('github');
+    setStep('welcome');
   }, []);
 
   /** 更新源配置返回歌词模式配置 */
@@ -121,29 +119,9 @@ function GuideApp(): ReactElement {
     setStep('lyricMode');
   }, []);
 
-  /** 开源信息完成，进入赞助商页 */
-  const handleGithubNext = useCallback((): void => {
-    setStep('sponsors');
-  }, []);
-
-  /** 开源信息返回更新源配置 */
-  const handleGithubPrev = useCallback((): void => {
-    setStep('update');
-  }, []);
-
-  /** 赞助商页完成，进入欢迎页 */
-  const handleSponsorsNext = useCallback((): void => {
-    setStep('welcome');
-  }, []);
-
-  /** 赞助商页返回开源信息 */
-  const handleSponsorsPrev = useCallback((): void => {
-    setStep('github');
-  }, []);
-
-  /** 欢迎页返回赞助商页 */
+  /** 欢迎页返回更新源配置 */
   const handleWelcomePrev = useCallback((): void => {
-    setStep('sponsors');
+    setStep('update');
   }, []);
 
   return (
@@ -193,18 +171,6 @@ function GuideApp(): ReactElement {
           <UpdateStep
             onNext={handleUpdateNext}
             onPrev={handleUpdatePrev}
-          />
-        )}
-        {step === 'github' && (
-          <GithubStep
-            onNext={handleGithubNext}
-            onPrev={handleGithubPrev}
-          />
-        )}
-        {step === 'sponsors' && (
-          <SponsorStep
-            onNext={handleSponsorsNext}
-            onPrev={handleSponsorsPrev}
           />
         )}
         {step === 'welcome' && (

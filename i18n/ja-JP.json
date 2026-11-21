@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "eIsland",
+    "appName": "Capsule",
     "errors": {
       "complexMode": "虚数単位 i を含む式は複素数モードで計算してください",
       "rootMountNotFound": "#root マウントノードが見つかりません"
@@ -131,7 +131,7 @@
     },
     "github": {
       "title": "オープンソース",
-      "subtitle": "eIsland はオープンソースプロジェクトです",
+      "subtitle": "Capsule はオープンソースプロジェクトです",
       "links": {
         "repo": "GitHub",
         "website": "公式サイト",
@@ -146,7 +146,7 @@
       "subtitle": "スポンサーの皆様のご支援に感謝します"
     },
     "welcome": {
-      "title": "eIsland へようこそ",
+      "title": "Capsule へようこそ",
       "subtitle": "設定が完了しました。Dynamic Island を使い始めましょう",
       "desc": "Apple Dynamic Island に着想を得た Windows デスクトップ用フローティングウィジェット。\nデスクトップをもっと生き生きと、使いやすく。"
     },
@@ -309,8 +309,8 @@
           }
         },
         "shortcut": {
-          "toggleIsland": "非表示/表示",
-          "quitIsland": "eIsland を終了",
+          "togglCapsule": "非表示/表示",
+          "quitIsland": "Capsule を終了",
           "resetPosition": "位置をリセットするショートカット",
           "screenshot": "範囲指定スクリーンショット",
           "switchSong": "曲を切り替える"
@@ -451,7 +451,7 @@
       "switchToPage": "{{label}} ページに切り替え"
     },
     "actions": {
-      "hideIsland": "Dynamic Island を非表示",
+      "hidCapsule": "Dynamic Island を非表示",
       "hide": "非表示",
       "quitIsland": "Dynamic Island を終了",
       "quit": "終了"
@@ -1342,7 +1342,7 @@
   },
   "sliderCaptcha": {
     "title": "スライダー認証",
-    "subtitle": "認証サービス提供: Pyisland Server & eIsland",
+    "subtitle": "認証サービス提供: Pyisland Server & Capsule",
     "hint": "下の式を計算し、答えの値までスライダーをドラッグしてください",
     "traceCode": "traceCode: {{code}}",
     "equationLabel": "計算問題",
@@ -3435,8 +3435,8 @@
       },
       "autostart": {
         "toolsHint": "よく使うアプリ操作とログツール",
-        "quit": "eIsland を終了",
-        "restart": "eIsland を再起動",
+        "quit": "Capsule を終了",
+        "restart": "Capsule を再起動",
         "openLogs": "ログフォルダーを開く",
         "clearLogs": "ログキャッシュを消去",
         "logsClearing": "消去中...",
@@ -3451,7 +3451,7 @@
         },
         "status": {
           "disabled": "自動起動は無効です。",
-          "enabled": "ログイン時に eIsland を起動します。",
+          "enabled": "ログイン時に Capsule を起動します。",
           "highPriority": "高い優先度で起動し、読み込みを速めます。"
         }
       }
@@ -3790,13 +3790,13 @@
         "clearBtn": "クリア"
       },
       "window": {
-        "toggleIsland": {
+        "togglCapsule": {
           "title": "アイランドの表示/非表示ショートカット",
           "hint": "「編集」をクリックしてキーを押してください（例：Alt+X、Ctrl+Shift+H）"
         },
         "quitApp": {
-          "title": "eIsland の終了ショートカット",
-          "hint": "押すと eIsland をすぐに終了します"
+          "title": "Capsule の終了ショートカット",
+          "hint": "押すと Capsule をすぐに終了します"
         },
         "resetPosition": {
           "title": "位置をリセットするショートカット",
@@ -4278,7 +4278,7 @@
         "register": "新規登録",
         "loginBtn": "ログイン",
         "registerBtn": "アカウントを作成",
-        "hint": "ログインと新規登録はeIsland serverが提供しています",
+        "hint": "ログインと新規登録はCapsule serverが提供しています",
         "entryTitle": "ログインするとアバター、プロフィール、アカウントのセキュリティ設定を管理できます",
         "gotoLogin": "ログインへ",
         "gotoRegister": "新規登録へ",
@@ -4874,11 +4874,11 @@
   },
   "tray": {
     "showIsland": "アイランドを表示",
-    "hideIsland": "アイランドを非表示",
+    "hidCapsule": "アイランドを非表示",
     "openSettings": "設定画面を開く",
     "alwaysOnTop": "常に最前面に表示",
     "openLogFolder": "ログフォルダーを開く",
-    "restart": "eIsland を再起動",
+    "restart": "Capsule を再起動",
     "quit": "終了",
     "menuLabel": "トレイメニュー",
     "notLoggedIn": "未ログイン",
@@ -4899,7 +4899,7 @@
   },
   "devCli": {
     "help": {
-      "title": "eIsland リポジトリのスクリプトを実行",
+      "title": "Capsule リポジトリのスクリプトを実行",
       "usage": "使い方",
       "options": "オプション",
       "examples": "例",
@@ -4968,14 +4968,14 @@
     },
     "cancelled": "キャンセルしました",
     "errors": {
-      "badArgs": "引数が無効です：{{message}}\nスクリプトの引数は \"--\" の後に指定してください（例：eisland-cli run test -- --watch）",
-      "rootNotFound": "eIsland リポジトリが見つかりません。リポジトリ内で実行してください。",
+      "badArgs": "引数が無効です：{{message}}\nスクリプトの引数は \"--\" の後に指定してください（例：capsule-cli run test -- --watch）",
+      "rootNotFound": "Capsule リポジトリが見つかりません。リポジトリ内で実行してください。",
       "unknownGroup": "不明なグループ \"{{group}}\"。利用可能なグループ：{{groups}}",
-      "runMissingName": "スクリプト名がありません。使い方：eisland-cli run <script>",
+      "runMissingName": "スクリプト名がありません。使い方：capsule-cli run <script>",
       "incompleteScript": "\"{{name}}\" はスクリプトではありません。一致するスクリプト：",
       "unknownScript": "不明なスクリプト \"{{name}}\"。",
       "didYouMean": "もしかして：",
-      "listHint": "\"eisland-cli list\" ですべてのスクリプトを表示できます。",
+      "listHint": "\"capsule-cli list\" ですべてのスクリプトを表示できます。",
       "dangerousNonInteractive": "\"{{name}}\" は危険なスクリプトで、非対話ターミナルでは確認できません。--yes を付けて再実行してください。",
       "spawnFailed": "npm の起動に失敗しました：{{message}}"
     },
@@ -4992,7 +4992,7 @@
       "test:shared": "共有モジュールのテストを実行",
       "test:discovery": "Vitest のテストファイル検出を検証",
       "test:coverage": "すべてのテストをカバレッジ付きで実行",
-      "test:cli": "eIsland CLI のテストを実行",
+      "test:cli": "Capsule CLI のテストを実行",
       "postinstall": "インストール後に CLI の依存関係を準備",
       "package": "ネイティブプラグイン、Tauri NSIS インストーラー、公式更新署名とマニフェストをビルド",
       "changelog:generate": "docs/CHANGE_LOG.md を生成",
@@ -5055,7 +5055,7 @@
         },
         "storage": {
           "label": "ストレージ",
-          "description": "このマシンの eIsland アプリの保存項目をすべて読み取り専用で表示（機密情報は伏せ字）"
+          "description": "このマシンの Capsule アプリの保存項目をすべて読み取り専用で表示（機密情報は伏せ字）"
         }
       },
       "smtc": {
@@ -5067,7 +5067,7 @@
         "empty": "メディアセッションがありません。任意のプレーヤーで再生してください。",
         "unknown": "未提供",
         "noTimeline": "アプリが再生位置を提供していません",
-        "binaryMissing": "eisland.exe が見つかりません。npm run build:e2e を実行するか EISLAND_SMTC_BINARY を設定してください。",
+        "binaryMissing": "capsule.exe が見つかりません。npm run build:e2e を実行するか EISLAND_SMTC_BINARY を設定してください。",
         "binaryOutdated": "{{file}} は古いため継続読み取りに対応していません。npm run build:e2e を再実行してください。",
         "invalidSnapshot": "SMTC セッションのスナップショットが無効です。",
         "exited": "読み取りプロセスが終了しました（コード {{code}}）。まもなく再起動します。",
@@ -5089,9 +5089,9 @@
         }
       },
       "storage": {
-        "title": "eIsland ローカルストレージ",
+        "title": "Capsule ローカルストレージ",
         "count": "{{count}} 件",
-        "missing": "保存ディレクトリが見つかりません。このマシンで eIsland がまだ起動されていない可能性があります。",
+        "missing": "保存ディレクトリが見つかりません。このマシンで Capsule がまだ起動されていない可能性があります。",
         "error": "保存ディレクトリの読み取りに失敗しました：{{message}}",
         "empty": "保存ディレクトリは空です。",
         "hint": "↑↓ 選択 · PgUp/PgDn スクロール · D 削除 · R 再読み込み · Esc 戻る",
@@ -5120,9 +5120,9 @@
       "phase": "画面",
       "simulated": "サンプルデータ · 更新チェックなし"
     },
-    "brand": "eIsland",
+    "brand": "Capsule",
     "adapterVersion": "移行アシスタント · {{version}}",
-    "eyebrow": "新しい eIsland へ",
+    "eyebrow": "新しい Capsule へ",
     "language": "言語",
     "close": "閉じる",
     "cancel": "準備を中止",
@@ -5158,22 +5158,22 @@
     "openBackup": "検証済みバックアップを開く",
     "progressBytes": "{{done}} / {{total}} MB",
     "unknownSize": "不明",
-    "dataNotice": "元のデータは削除されません。設定とダウンロード履歴は既存のキー単位ストレージを引き続き使用します。一部のサービスでは再ログインが必要です。移行中は旧 eIsland を起動しないでください。",
+    "dataNotice": "元のデータは削除されません。設定とダウンロード履歴は既存のキー単位ストレージを引き続き使用します。一部のサービスでは再ログインが必要です。移行中は旧 Capsule を起動しないでください。",
     "actions": {
       "inspect": "更新を確認",
       "prepare": "バックアップして取得",
       "install": "インストーラーを開く",
-      "launch": "eIsland を起動",
+      "launch": "Capsule を起動",
       "uninstallAndLaunch": "旧版を削除して起動"
     },
     "phases": {
       "installed": {
-        "title": "新しい eIsland は導入済みです",
-        "body": "対応するバージョンがインストール済みです。そのまま起動できます。今後の更新は eIsland 内で行います。"
+        "title": "新しい Capsule は導入済みです",
+        "body": "対応するバージョンがインストール済みです。そのまま起動できます。今後の更新は Capsule 内で行います。"
       },
       "welcome": {
-        "title": "新しい eIsland の準備をしましょう",
-        "body": "移行アシスタント {{version}} がデータをバックアップし、eIsland {{targetVersion}} 以降をダウンロードしてインストールします。"
+        "title": "新しい Capsule の準備をしましょう",
+        "body": "移行アシスタント {{version}} がデータをバックアップし、Capsule {{targetVersion}} 以降をダウンロードしてインストールします。"
       },
       "inspecting": {
         "title": "環境を確認しています",
@@ -5188,7 +5188,7 @@
         "body": "ファイルをコピーして検証しています。バックアップ完了後にダウンロードを開始します。"
       },
       "downloading": {
-        "title": "新しい eIsland を取得しています",
+        "title": "新しい Capsule を取得しています",
         "body": "バックアップが完了しました。インストーラーをダウンロードしています。"
       },
       "verifying": {
@@ -5205,7 +5205,7 @@
       },
       "complete": {
         "title": "おかえりなさい",
-        "body": "下のボタンで eIsland を起動すると、移行アシスタントが終了します。"
+        "body": "下のボタンで Capsule を起動すると、移行アシスタントが終了します。"
       },
       "cancelled": {
         "title": "準備を中止しました",
@@ -5220,18 +5220,18 @@
       "missingKey": "更新を検証する公開鍵がありません。配布元に再ビルドを依頼してください。",
       "invalidSource": "ダウンロード元が未設定です。別の取得元を選択してください。",
       "invalidManifest": "更新マニフェストが無効です。取得元を変更するか、後で再試行してください。",
-      "targetTooOld": "eIsland {{targetVersion}} 以降が必要です。",
+      "targetTooOld": "Capsule {{targetVersion}} 以降が必要です。",
       "network": "ダウンロード元に接続できません。ネットワークを確認するか、取得元を変更してください。",
       "invalidInstaller": "インストーラーが不完全か、形式が正しくありません。再ダウンロードしてください。",
       "signatureRejected": "署名またはバージョンの検証に失敗しました。再ダウンロードするか、取得元を変更してください。",
       "backupLink": "データフォルダーにリンクまたは無効なパスがあります。フォルダーを確認して再試行してください。",
       "backupLimit": "データ量またはファイル数がバックアップの上限を超えています。先に手動でバックアップし、ファイルを整理してください。",
-      "dataChanged": "データまたはフォルダーが変更されました。他の eIsland を終了して再確認してください。",
-      "closeRunning": "他の eIsland をすべて終了して再試行してください。",
+      "dataChanged": "データまたはフォルダーが変更されました。他の Capsule を終了して再確認してください。",
+      "closeRunning": "他の Capsule をすべて終了して再試行してください。",
       "backupMissing": "バックアップが不完全です。再度バックアップしてからインストールしてください。",
       "installOverlap": "新旧のインストール先が重複しています。配布元にお問い合わせください。",
       "installNotConfirmed": "予定のバージョンが見つかりません。インストールが完了し、インストール先を変更していないことを確認してください。",
-      "alreadyCurrent": "同じか新しいバージョンがインストール済みです。eIsland を直接起動してください。",
+      "alreadyCurrent": "同じか新しいバージョンがインストール済みです。Capsule を直接起動してください。",
       "windowsOnly": "このアシスタントは Windows 専用です。",
       "operationFailed": "操作に失敗しました。ネットワーク、空き容量、フォルダーの権限を確認して再試行してください。",
       "invalidDirectory": "インストール先が無効です。別のフォルダーを選択してください。",
@@ -5240,11 +5240,11 @@
       "legacyUntrusted": "旧版のアンインストーラーは他のプログラムから変更できる状態のため、実行しませんでした。Windows の設定から旧版を手動でアンインストールしてください。"
     },
     "chooseDirectory": "フォルダーを選択",
-    "removeLegacy": "インストール後に旧版 eIsland をアンインストール",
+    "removeLegacy": "インストール後に旧版 Capsule をアンインストール",
     "removeLegacyNote": "インストール成功後に旧版のアンインストーラーを開きます。終了後に新版を起動します。バックアップは残ります。",
     "legacyUninstallFailed": {
       "title": "旧版を削除できませんでした",
-      "body": "旧版の eIsland を完全にはアンインストールできませんでした。新版は起動済みです。Windows の設定から旧版を手動でアンインストールしてください。バックアップは残ります。"
+      "body": "旧版の Capsule を完全にはアンインストールできませんでした。新版は起動済みです。Windows の設定から旧版を手動でアンインストールしてください。バックアップは残ります。"
     }
   },
   "fileTransfer": {

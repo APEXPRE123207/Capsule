@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next';
 import type { SliderCaptchaContentProps } from './config/sliderCaptchaTypes';
 import { useSliderCaptchaDerived } from './hooks/useSliderCaptchaDerived';
 import '../../../styles/slider-captcha.css';
-import eislandLogo from '../../../../../resources/icon/eisland.svg';
+import capsuleLogo from '../../../../../resources/icon/capsule_logo.png';
 
 /**
  * 渲染滑块验证码弹层组件。
@@ -63,10 +63,10 @@ export function SliderCaptchaContent({ challenge, onCancel, onConfirm }: SliderC
     >
       <div className={`slider-captcha-card slider-captcha-card--danger${closing ? ' is-closing' : ''}`}>
         <div className="slider-captcha-brand">
-          <img className="slider-captcha-brand-logo" src={eislandLogo} alt="eIsland" />
+          <img className="slider-captcha-brand-logo" src={capsuleLogo} alt="Capsule" />
           <div className="slider-captcha-brand-texts">
             <div className="slider-captcha-title">{t('sliderCaptcha.title', { defaultValue: '滑块验证' })}</div>
-            <div className="slider-captcha-subtitle">{t('sliderCaptcha.subtitle', { defaultValue: '由 Pyisland Server & eIsland 提供质询服务' })}</div>
+            <div className="slider-captcha-subtitle">{t('sliderCaptcha.subtitle', { defaultValue: 'Capsule 安全服务' })}</div>
           </div>
         </div>
         <div className="slider-captcha-hint">{t('sliderCaptcha.hint', { defaultValue: '请先计算下方算式结果，再将滑块拖到对应值' })}</div>

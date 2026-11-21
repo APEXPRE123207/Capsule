@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "eIsland",
+    "appName": "Capsule",
     "errors": {
       "complexMode": "含虛數單位 i 的公式請使用複數介面",
       "rootMountNotFound": "未找到 #root 掛載節點"
@@ -131,7 +131,7 @@
     },
     "github": {
       "title": "開源信息",
-      "subtitle": "eIsland 是一個開源項目",
+      "subtitle": "Capsule 是一個開源項目",
       "links": {
         "repo": "GitHub",
         "website": "官網",
@@ -146,7 +146,7 @@
       "subtitle": "感謝贊助商的支持"
     },
     "welcome": {
-      "title": "歡迎使用 eIsland",
+      "title": "歡迎使用 Capsule",
       "subtitle": "配置完成，開始體驗靈動島吧",
       "desc": "一款靈感來自 Apple 靈動島的 Windows 桌面浮窗小組件，\n讓你的桌面更加靈動、高效。"
     },
@@ -309,7 +309,7 @@
           }
         },
         "shortcut": {
-          "toggleIsland": "隱藏/顯示",
+          "togglCapsule": "隱藏/顯示",
           "quitIsland": "關閉靈動島",
           "resetPosition": "還原默認位置快捷鍵",
           "screenshot": "選區截圖",
@@ -451,7 +451,7 @@
       "switchToPage": "切換到{{label}}頁面"
     },
     "actions": {
-      "hideIsland": "隱藏靈動島",
+      "hidCapsule": "隱藏靈動島",
       "hide": "隱藏",
       "quitIsland": "退出靈動島",
       "quit": "退出"
@@ -1342,7 +1342,7 @@
   },
   "sliderCaptcha": {
     "title": "滑塊驗證",
-    "subtitle": "由 Pyisland Server & eIsland 提供質詢服務",
+    "subtitle": "由 Pyisland Server & Capsule 提供質詢服務",
     "hint": "請先計算下方算式結果，再將滑塊拖到對應值",
     "traceCode": "traceCode: {{code}}",
     "equationLabel": "算式挑戰",
@@ -3790,7 +3790,7 @@
         "clearBtn": "清除"
       },
       "window": {
-        "toggleIsland": {
+        "togglCapsule": {
           "title": "隱藏/顯示快捷鍵",
           "hint": "點擊“修改”後按下組合鍵（如 Alt+X、Ctrl+Shift+H）"
         },
@@ -4278,7 +4278,7 @@
         "register": "註冊",
         "loginBtn": "登錄",
         "registerBtn": "註冊並登錄",
-        "hint": "登錄註冊服務由 eIsland server 提供",
+        "hint": "登錄註冊服務由 Capsule server 提供",
         "entryTitle": "登錄後可管理頭像、資料與賬號安全設置",
         "gotoLogin": "前往登錄",
         "gotoRegister": "前往註冊",
@@ -4874,7 +4874,7 @@
   },
   "tray": {
     "showIsland": "顯示靈動島",
-    "hideIsland": "隱藏靈動島",
+    "hidCapsule": "隱藏靈動島",
     "openSettings": "開啟設定介面",
     "alwaysOnTop": "視窗置頂",
     "openLogFolder": "開啟日誌資料夾",
@@ -4899,7 +4899,7 @@
   },
   "devCli": {
     "help": {
-      "title": "執行 eIsland 儲存庫腳本",
+      "title": "執行 Capsule 儲存庫腳本",
       "usage": "用法",
       "options": "選項",
       "examples": "範例",
@@ -4968,14 +4968,14 @@
     },
     "cancelled": "已取消",
     "errors": {
-      "badArgs": "參數無效：{{message}}\n腳本參數請放在 \"--\" 之後，例如 eisland-cli run test -- --watch",
-      "rootNotFound": "找不到 eIsland 儲存庫，請在儲存庫目錄內執行。",
+      "badArgs": "參數無效：{{message}}\n腳本參數請放在 \"--\" 之後，例如 capsule-cli run test -- --watch",
+      "rootNotFound": "找不到 Capsule 儲存庫，請在儲存庫目錄內執行。",
       "unknownGroup": "未知分組 \"{{group}}\"，可用分組：{{groups}}",
-      "runMissingName": "缺少腳本名稱。用法：eisland-cli run <script>",
+      "runMissingName": "缺少腳本名稱。用法：capsule-cli run <script>",
       "incompleteScript": "\"{{name}}\" 不是完整的腳本名稱，符合的腳本：",
       "unknownScript": "未知腳本 \"{{name}}\"。",
       "didYouMean": "你是不是想執行：",
-      "listHint": "執行 \"eisland-cli list\" 查看全部腳本。",
+      "listHint": "執行 \"capsule-cli list\" 查看全部腳本。",
       "dangerousNonInteractive": "\"{{name}}\" 是危險腳本，非互動終端機無法確認，請加上 --yes 重新執行。",
       "spawnFailed": "啟動 npm 失敗：{{message}}"
     },
@@ -4992,7 +4992,7 @@
       "test:shared": "執行共用模組測試",
       "test:discovery": "驗證 Vitest 測試檔案探索規則",
       "test:coverage": "執行全部測試並產生覆蓋率報告",
-      "test:cli": "執行 eIsland CLI 測試",
+      "test:cli": "執行 Capsule CLI 測試",
       "postinstall": "安裝後準備 CLI 相依套件",
       "package": "自動建置原生外掛、Tauri NSIS 安裝套件、官方更新簽章及資訊清單",
       "changelog:generate": "產生 docs/CHANGE_LOG.md",
@@ -5055,7 +5055,7 @@
         },
         "storage": {
           "label": "本機儲存",
-          "description": "唯讀檢視本機 eIsland 應用程式的全部儲存項目，敏感內容已遮蔽"
+          "description": "唯讀檢視本機 Capsule 應用程式的全部儲存項目，敏感內容已遮蔽"
         }
       },
       "smtc": {
@@ -5067,7 +5067,7 @@
         "empty": "目前沒有媒體工作階段，請先在任意播放器中播放內容。",
         "unknown": "未提供",
         "noTimeline": "應用程式未提供播放進度",
-        "binaryMissing": "找不到 eisland.exe，請先執行 npm run build:e2e 或設定 EISLAND_SMTC_BINARY。",
+        "binaryMissing": "找不到 capsule.exe，請先執行 npm run build:e2e 或設定 EISLAND_SMTC_BINARY。",
         "binaryOutdated": "{{file}} 版本過舊，不支援持續讀取，請重新執行 npm run build:e2e。",
         "invalidSnapshot": "SMTC 工作階段快照無效。",
         "exited": "讀取程序已結束（代碼 {{code}}），稍後自動重新啟動。",
@@ -5089,9 +5089,9 @@
         }
       },
       "storage": {
-        "title": "eIsland 本機儲存",
+        "title": "Capsule 本機儲存",
         "count": "{{count}} 項",
-        "missing": "找不到儲存目錄，eIsland 可能尚未在本機執行過。",
+        "missing": "找不到儲存目錄，Capsule 可能尚未在本機執行過。",
         "error": "讀取儲存目錄失敗：{{message}}",
         "empty": "儲存目錄為空。",
         "hint": "↑↓ 選擇 · PgUp/PgDn 翻閱 · D 刪除 · R 重新整理 · Esc 返回",
@@ -5120,9 +5120,9 @@
       "phase": "畫面",
       "simulated": "模擬資料 · 略過更新檢查"
     },
-    "brand": "eIsland",
+    "brand": "Capsule",
     "adapterVersion": "移轉助手 · {{version}}",
-    "eyebrow": "新一代 eIsland",
+    "eyebrow": "新一代 Capsule",
     "language": "語言",
     "close": "關閉",
     "cancel": "取消準備",
@@ -5163,17 +5163,17 @@
       "inspect": "檢查新版本",
       "prepare": "備份並下載",
       "install": "開啟安裝程式",
-      "launch": "啟動 eIsland",
+      "launch": "啟動 Capsule",
       "uninstallAndLaunch": "解除安裝舊版並啟動"
     },
     "phases": {
       "installed": {
-        "title": "新的 eIsland 已經安裝",
-        "body": "已安裝可用版本，可直接啟動。後續更新在 eIsland 內完成。"
+        "title": "新的 Capsule 已經安裝",
+        "body": "已安裝可用版本，可直接啟動。後續更新在 Capsule 內完成。"
       },
       "welcome": {
-        "title": "準備好，迎接新的 eIsland",
-        "body": "移轉助手 {{version}} 會先備份資料，再下載並安裝 eIsland {{targetVersion}} 或更新版本。"
+        "title": "準備好，迎接新的 Capsule",
+        "body": "移轉助手 {{version}} 會先備份資料，再下載並安裝 Capsule {{targetVersion}} 或更新版本。"
       },
       "inspecting": {
         "title": "正在檢查",
@@ -5188,7 +5188,7 @@
         "body": "正在複製並驗證檔案，備份完成後開始下載。"
       },
       "downloading": {
-        "title": "正在下載新的 eIsland",
+        "title": "正在下載新的 Capsule",
         "body": "備份已完成，正在下載安裝套件。"
       },
       "verifying": {
@@ -5205,7 +5205,7 @@
       },
       "complete": {
         "title": "歡迎回來",
-        "body": "點擊下方按鈕啟動 eIsland，並結束移轉助手。"
+        "body": "點擊下方按鈕啟動 Capsule，並結束移轉助手。"
       },
       "cancelled": {
         "title": "準備已取消",
@@ -5220,18 +5220,18 @@
       "missingKey": "缺少更新驗證公開金鑰，請聯絡發布者重新打包。",
       "invalidSource": "下載來源尚未設定，請更換來源。",
       "invalidManifest": "更新清單無效，請更換下載來源或稍後重試。",
-      "targetTooOld": "需要 {{targetVersion}} 或更新版本的 eIsland。",
+      "targetTooOld": "需要 {{targetVersion}} 或更新版本的 Capsule。",
       "network": "無法連線至下載來源，請檢查網路或更換來源。",
       "invalidInstaller": "安裝套件不完整或格式錯誤，請重新下載。",
       "signatureRejected": "安裝套件簽章或版本驗證失敗，請重新下載或更換來源。",
       "backupLink": "資料目錄包含連結或路徑異常，無法備份。請檢查目錄後重試。",
       "backupLimit": "資料量或檔案數超過備份上限，請先手動備份並整理檔案。",
-      "dataChanged": "資料或目錄已變更，請結束其他 eIsland 後重新檢查。",
-      "closeRunning": "請結束其他正在執行的 eIsland 後重試。",
+      "dataChanged": "資料或目錄已變更，請結束其他 Capsule 後重新檢查。",
+      "closeRunning": "請結束其他正在執行的 Capsule 後重試。",
       "backupMissing": "備份不完整，無法安裝。請重新備份。",
       "installOverlap": "新舊安裝目錄重疊，請聯絡發布者。",
       "installNotConfirmed": "未偵測到預期的安裝版本，請確認安裝已完成且安裝目錄未變更。",
-      "alreadyCurrent": "已安裝相同或更新版本，請直接啟動 eIsland。",
+      "alreadyCurrent": "已安裝相同或更新版本，請直接啟動 Capsule。",
       "windowsOnly": "移轉助手僅支援 Windows。",
       "operationFailed": "操作失敗，請檢查網路、磁碟空間和目錄權限後重試。",
       "invalidDirectory": "安裝目錄無效，請選擇其他目錄。",
@@ -5240,11 +5240,11 @@
       "legacyUntrusted": "舊版解除安裝程式可被其他程式修改，已停止執行。請在 Windows 設定中手動解除安裝舊版。"
     },
     "chooseDirectory": "選擇目錄",
-    "removeLegacy": "安裝完成後解除安裝舊版 eIsland",
+    "removeLegacy": "安裝完成後解除安裝舊版 Capsule",
     "removeLegacyNote": "安裝成功後開啟舊版解除安裝程式，完成後啟動新版。備份會保留。",
     "legacyUninstallFailed": {
       "title": "舊版未解除安裝",
-      "body": "舊版 eIsland 未完全解除安裝，新版已啟動。請在 Windows 設定中手動解除安裝舊版。備份會保留。"
+      "body": "舊版 Capsule 未完全解除安裝，新版已啟動。請在 Windows 設定中手動解除安裝舊版。備份會保留。"
     }
   },
   "fileTransfer": {

@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "eIsland",
+    "appName": "Capsule",
     "errors": {
       "complexMode": "Use the Complex numbers mode for imaginary values",
       "rootMountNotFound": "#root mount node not found"
@@ -131,7 +131,7 @@
     },
     "github": {
       "title": "Open Source",
-      "subtitle": "eIsland is an open source project",
+      "subtitle": "Capsule is an open source project",
       "links": {
         "repo": "GitHub",
         "website": "Website",
@@ -146,7 +146,7 @@
       "subtitle": "Thanks to our sponsors for their support"
     },
     "welcome": {
-      "title": "Welcome to eIsland",
+      "title": "Welcome to Capsule",
       "subtitle": "Setup complete, start your Dynamic Island experience",
       "desc": "A Windows desktop floating widget inspired by Apple Dynamic Island,\nmaking your desktop more vivid and productive."
     },
@@ -309,8 +309,8 @@
           }
         },
         "shortcut": {
-          "toggleIsland": "Hide/Show",
-          "quitIsland": "Quit eIsland",
+          "togglCapsule": "Hide/Show",
+          "quitIsland": "Quit Capsule",
           "resetPosition": "Reset position shortcut",
           "screenshot": "Area screenshot",
           "switchSong": "Switch song"
@@ -451,7 +451,7 @@
       "switchToPage": "Switch to {{label}} page"
     },
     "actions": {
-      "hideIsland": "Hide Dynamic Island",
+      "hidCapsule": "Hide Dynamic Island",
       "hide": "Hide",
       "quitIsland": "Quit Dynamic Island",
       "quit": "Quit"
@@ -1342,7 +1342,7 @@
   },
   "sliderCaptcha": {
     "title": "Slider Verification",
-    "subtitle": "Challenge service powered by Pyisland Server & eIsland",
+    "subtitle": "Challenge service powered by Pyisland Server & Capsule",
     "hint": "Solve the equation below first, then drag the slider to the matching value",
     "traceCode": "traceCode: {{code}}",
     "equationLabel": "Equation Challenge",
@@ -3435,8 +3435,8 @@
       },
       "autostart": {
         "toolsHint": "Common app actions and log tools",
-        "quit": "Quit eIsland",
-        "restart": "Restart eIsland",
+        "quit": "Quit Capsule",
+        "restart": "Restart Capsule",
         "openLogs": "Open logs folder",
         "clearLogs": "Clear log cache",
         "logsClearing": "Clearing...",
@@ -3451,7 +3451,7 @@
         },
         "status": {
           "disabled": "Auto start is disabled.",
-          "enabled": "eIsland will start on login.",
+          "enabled": "Capsule will start on login.",
           "highPriority": "Starts with higher priority for faster load."
         }
       }
@@ -3790,13 +3790,13 @@
         "clearBtn": "Clear"
       },
       "window": {
-        "toggleIsland": {
+        "togglCapsule": {
           "title": "Show/Hide Island Shortcut",
           "hint": "Click Edit and press keys (e.g. Alt+X, Ctrl+Shift+H)"
         },
         "quitApp": {
-          "title": "Quit eIsland Shortcut",
-          "hint": "Press to quit eIsland immediately"
+          "title": "Quit Capsule Shortcut",
+          "hint": "Press to quit Capsule immediately"
         },
         "resetPosition": {
           "title": "Reset Position Shortcut",
@@ -4278,7 +4278,7 @@
         "register": "Sign Up",
         "loginBtn": "Sign In",
         "registerBtn": "Create account",
-        "hint": "Sign in and registration are powered by eIsland server",
+        "hint": "Sign in and registration are powered by Capsule server",
         "entryTitle": "Sign in to manage avatar, profile, and account security settings",
         "gotoLogin": "Go to Sign In",
         "gotoRegister": "Go to Sign Up",
@@ -4874,11 +4874,11 @@
   },
   "tray": {
     "showIsland": "Show Island",
-    "hideIsland": "Hide Island",
+    "hidCapsule": "Hide Island",
     "openSettings": "Open Settings",
     "alwaysOnTop": "Always on Top",
     "openLogFolder": "Open Log Folder",
-    "restart": "Restart eIsland",
+    "restart": "Restart Capsule",
     "quit": "Quit",
     "menuLabel": "Tray menu",
     "notLoggedIn": "Not signed in",
@@ -4899,7 +4899,7 @@
   },
   "devCli": {
     "help": {
-      "title": "run eIsland repository scripts",
+      "title": "run Capsule repository scripts",
       "usage": "Usage",
       "options": "Options",
       "examples": "Examples",
@@ -4968,14 +4968,14 @@
     },
     "cancelled": "Cancelled",
     "errors": {
-      "badArgs": "Invalid arguments: {{message}}\nPass script arguments after \"--\", e.g. eisland-cli run test -- --watch",
-      "rootNotFound": "eIsland repository not found. Run this command inside the repository.",
+      "badArgs": "Invalid arguments: {{message}}\nPass script arguments after \"--\", e.g. capsule-cli run test -- --watch",
+      "rootNotFound": "Capsule repository not found. Run this command inside the repository.",
       "unknownGroup": "Unknown group \"{{group}}\". Available groups: {{groups}}",
-      "runMissingName": "Missing script name. Usage: eisland-cli run <script>",
+      "runMissingName": "Missing script name. Usage: capsule-cli run <script>",
       "incompleteScript": "\"{{name}}\" is not a script. Matching scripts:",
       "unknownScript": "Unknown script \"{{name}}\".",
       "didYouMean": "Did you mean:",
-      "listHint": "Run \"eisland-cli list\" to see all scripts.",
+      "listHint": "Run \"capsule-cli list\" to see all scripts.",
       "dangerousNonInteractive": "\"{{name}}\" is dangerous and cannot be confirmed in a non-interactive terminal. Re-run with --yes.",
       "spawnFailed": "Failed to start npm: {{message}}"
     },
@@ -4992,7 +4992,7 @@
       "test:shared": "Run shared module tests",
       "test:discovery": "Verify Vitest test file discovery",
       "test:coverage": "Run all tests with a coverage report",
-      "test:cli": "Run eIsland CLI tests",
+      "test:cli": "Run Capsule CLI tests",
       "postinstall": "Install CLI dependencies after installation",
       "package": "Build native plugins, Tauri NSIS installers, official updater signatures and manifests",
       "changelog:generate": "Generate docs/CHANGE_LOG.md",
@@ -5055,7 +5055,7 @@
         },
         "storage": {
           "label": "Storage",
-          "description": "Read-only view of every eIsland app store entry on this machine, with secrets masked"
+          "description": "Read-only view of every Capsule app store entry on this machine, with secrets masked"
         }
       },
       "smtc": {
@@ -5067,7 +5067,7 @@
         "empty": "No media sessions. Start playing something in any player.",
         "unknown": "not provided",
         "noTimeline": "The app does not report playback progress",
-        "binaryMissing": "eisland.exe not found. Run npm run build:e2e or set EISLAND_SMTC_BINARY.",
+        "binaryMissing": "capsule.exe not found. Run npm run build:e2e or set EISLAND_SMTC_BINARY.",
         "binaryOutdated": "{{file}} is too old to stream sessions. Run npm run build:e2e again.",
         "invalidSnapshot": "Invalid SMTC session snapshot.",
         "exited": "The reader process exited (code {{code}}). Restarting shortly.",
@@ -5089,9 +5089,9 @@
         }
       },
       "storage": {
-        "title": "eIsland local storage",
+        "title": "Capsule local storage",
         "count": "{{count}} entries",
-        "missing": "Store directory not found. eIsland may not have run on this machine yet.",
+        "missing": "Store directory not found. Capsule may not have run on this machine yet.",
         "error": "Failed to read the store directory: {{message}}",
         "empty": "The store directory is empty.",
         "hint": "↑↓ select · PgUp/PgDn scroll · D delete · R reload · Esc back",
@@ -5120,9 +5120,9 @@
       "phase": "Screen",
       "simulated": "Simulated data · Update checks skipped"
     },
-    "brand": "eIsland",
+    "brand": "Capsule",
     "adapterVersion": "Migration assistant · {{version}}",
-    "eyebrow": "The next eIsland",
+    "eyebrow": "The next Capsule",
     "language": "Language",
     "close": "Close",
     "cancel": "Cancel preparation",
@@ -5158,22 +5158,22 @@
     "openBackup": "Open verified backup",
     "progressBytes": "{{done}} / {{total}} MB",
     "unknownSize": "unknown",
-    "dataNotice": "Your original data stays in place. Settings and download records retain their existing per-key storage. Some services may require signing in again. eIsland pauses during migration; keep the old version closed.",
+    "dataNotice": "Your original data stays in place. Settings and download records retain their existing per-key storage. Some services may require signing in again. Capsule pauses during migration; keep the old version closed.",
     "actions": {
       "inspect": "Check for update",
       "prepare": "Back up & download",
       "install": "Open installer",
-      "launch": "Launch eIsland",
+      "launch": "Launch Capsule",
       "uninstallAndLaunch": "Uninstall old version & launch"
     },
     "phases": {
       "installed": {
-        "title": "The new eIsland is already installed",
-        "body": "A supported version is installed and ready to launch. Future updates are handled in eIsland."
+        "title": "The new Capsule is already installed",
+        "body": "A supported version is installed and ready to launch. Future updates are handled in Capsule."
       },
       "welcome": {
-        "title": "Get ready for the next eIsland",
-        "body": "Migration assistant {{version}} will back up your data, then download and install eIsland {{targetVersion}} or later."
+        "title": "Get ready for the next Capsule",
+        "body": "Migration assistant {{version}} will back up your data, then download and install Capsule {{targetVersion}} or later."
       },
       "inspecting": {
         "title": "Checking your setup",
@@ -5188,7 +5188,7 @@
         "body": "Copying and verifying files. The download will start when the backup is complete."
       },
       "downloading": {
-        "title": "Downloading the next eIsland",
+        "title": "Downloading the next Capsule",
         "body": "Backup complete. Downloading the installer."
       },
       "verifying": {
@@ -5205,7 +5205,7 @@
       },
       "complete": {
         "title": "Welcome back",
-        "body": "Launch eIsland below to close the migration assistant."
+        "body": "Launch Capsule below to close the migration assistant."
       },
       "cancelled": {
         "title": "Preparation cancelled",
@@ -5220,18 +5220,18 @@
       "missingKey": "The update verification key is missing. Ask the publisher for a new build.",
       "invalidSource": "This download source is not configured. Choose another source.",
       "invalidManifest": "The update manifest is invalid. Choose another source or try again later.",
-      "targetTooOld": "eIsland {{targetVersion}} or later is required.",
+      "targetTooOld": "Capsule {{targetVersion}} or later is required.",
       "network": "Cannot connect to the download source. Check your connection or choose another source.",
       "invalidInstaller": "The installer is incomplete or has an invalid format. Download it again.",
       "signatureRejected": "The installer signature or version check failed. Download it again or choose another source.",
       "backupLink": "A data folder contains links or an invalid path. Check the folder and try again.",
       "backupLimit": "The data size or file count exceeds the backup limit. Back up the data manually and organize the files first.",
-      "dataChanged": "Data or folders have changed. Quit other eIsland instances and check again.",
-      "closeRunning": "Quit all other eIsland instances and try again.",
+      "dataChanged": "Data or folders have changed. Quit other Capsule instances and check again.",
+      "closeRunning": "Quit all other Capsule instances and try again.",
       "backupMissing": "The backup is incomplete. Create a new backup before installing.",
       "installOverlap": "The old and new installation folders overlap. Contact the publisher.",
       "installNotConfirmed": "The expected version was not found. Check that installation finished and the installation folder was not changed.",
-      "alreadyCurrent": "The same or a newer version is installed. Launch eIsland directly.",
+      "alreadyCurrent": "The same or a newer version is installed. Launch Capsule directly.",
       "windowsOnly": "This assistant supports Windows only.",
       "operationFailed": "The operation failed. Check your connection, free disk space and folder permissions, then try again.",
       "invalidDirectory": "The installation folder is invalid. Choose another folder.",
@@ -5240,11 +5240,11 @@
       "legacyUntrusted": "The old uninstaller can be modified by other programs, so it was not run. Uninstall the old version manually from Windows Settings."
     },
     "chooseDirectory": "Choose folder",
-    "removeLegacy": "Uninstall the old eIsland after installation",
+    "removeLegacy": "Uninstall the old Capsule after installation",
     "removeLegacyNote": "After installation, the old uninstaller opens. The new app starts when it closes. Your backup is retained.",
     "legacyUninstallFailed": {
       "title": "Old version not removed",
-      "body": "The old eIsland was not fully uninstalled. The new version has started. Uninstall the old version manually from Windows Settings. Your backup is retained."
+      "body": "The old Capsule was not fully uninstalled. The new version has started. Uninstall the old version manually from Windows Settings. Your backup is retained."
     }
   },
   "fileTransfer": {
