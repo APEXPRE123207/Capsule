@@ -37,16 +37,14 @@ Capsule is designed to be completely user-controlled with predictable desktop be
 
 ---
 
-## 🚀 Development & Usage
+## 🚀 Running Locally
 
 ### Prerequisites
-- Node.js (v20+ recommended)
-- npm
+- Node.js installed (v20+)
 
-### Running Locally
+### Quick Launch
 ```powershell
 cd capsule
-npm install
 npm start
 ```
 
@@ -54,19 +52,3 @@ npm start
 ```powershell
 npm test
 ```
-
-### Building Standalone Executable
-```powershell
-npm run package
-```
-This produces a portable Windows executable in `capsule/dist/capsule-win32-x64/`.
-
----
-
-## 🏗️ Automated GitHub Actions CI/CD
-
-Every push to `main` triggers [.github/workflows/build-windows.yml](.github/workflows/build-windows.yml), which:
-1. Installs Node.js dependencies
-2. Runs static syntax tests
-3. Packages the standalone Windows x64 executable
-4. Generates and uploads `capsule-windows-x64.zip` as a downloadable artifact.

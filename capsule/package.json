@@ -4,8 +4,8 @@
   "description": "A sleek, lightweight Windows Dynamic Island built with Electron, JavaScript, HTML, and CSS",
   "main": "src/main/main.js",
   "scripts": {
-    "start": "electron .",
-    "dev": "electron . --dev",
+    "start": "node scripts/start.js",
+    "dev": "node scripts/start.js",
     "test": "node --check src/main/main.js && node --check src/main/windowManager.js && node --check src/main/mediaManager.js && node --check src/main/systemIntegration.js && node --check src/main/trayManager.js && node --check src/main/configManager.js && node --check src/preload/preload.js && node --check src/renderer/js/lyricsParser.js && node --check src/renderer/js/weatherService.js && node --check src/renderer/js/calculator.js && node --check src/renderer/js/clipboardManager.js && node --check src/renderer/js/appLauncher.js && node --check src/renderer/js/fileSearch.js && node --check src/renderer/js/islandController.js && node --check src/renderer/js/app.js",
     "package": "electron-packager . capsule --platform=win32 --arch=x64 --out=dist --overwrite"
   },
