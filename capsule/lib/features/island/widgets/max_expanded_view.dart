@@ -19,81 +19,84 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(18.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Top Header: App icon, Title, Tab pill bar, and close button
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 28.0,
-                    height: 28.0,
-                    decoration: BoxDecoration(
-                      color: CapsuleTheme.accentCyan.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: const Icon(
-                      Icons.blur_on_rounded,
-                      size: 18.0,
-                      color: CapsuleTheme.accentCyan,
-                    ),
-                  ),
-                  const SizedBox(width: 10.0),
-                  const Text(
-                    'Capsule Hub',
-                    style: TextStyle(
-                      color: CapsuleTheme.textPrimary,
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-
-              // Close / Collapse button
-              IconButton(
-                icon: const Icon(Icons.close_rounded, size: 20.0),
-                color: CapsuleTheme.textSecondary,
-                tooltip: 'Collapse',
-                onPressed: widget.onCollapse,
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 12.0),
-
-          // Tab Selector
-          Container(
-            padding: const EdgeInsets.all(3.0),
-            decoration: BoxDecoration(
-              color: CapsuleTheme.surfaceHighlight,
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Row(
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Top Header: App icon, Title, Tab pill bar, and close button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildTabItem(0, 'System', Icons.speed_rounded),
-                _buildTabItem(1, 'Quick Note', Icons.edit_note_rounded),
-                _buildTabItem(2, 'Controls', Icons.tune_rounded),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 26.0,
+                      height: 26.0,
+                      decoration: BoxDecoration(
+                        color: CapsuleTheme.accentCyan.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: const Icon(
+                        Icons.blur_on_rounded,
+                        size: 16.0,
+                        color: CapsuleTheme.accentCyan,
+                      ),
+                    ),
+                    const SizedBox(width: 8.0),
+                    const Text(
+                      'Capsule Hub',
+                      style: TextStyle(
+                        color: CapsuleTheme.textPrimary,
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Close / Collapse button
+                IconButton(
+                  icon: const Icon(Icons.close_rounded, size: 18.0),
+                  color: CapsuleTheme.textSecondary,
+                  tooltip: 'Collapse',
+                  visualDensity: VisualDensity.compact,
+                  onPressed: widget.onCollapse,
+                ),
               ],
             ),
-          ),
 
-          const SizedBox(height: 16.0),
+            const SizedBox(height: 10.0),
 
-          // Content body
-          Expanded(
-            child: AnimatedSwitcher(
+            // Tab Selector
+            Container(
+              padding: const EdgeInsets.all(2.5),
+              decoration: BoxDecoration(
+                color: CapsuleTheme.surfaceHighlight,
+                borderRadius: BorderRadius.circular(9.0),
+              ),
+              child: Row(
+                children: [
+                  _buildTabItem(0, 'System', Icons.speed_rounded),
+                  _buildTabItem(1, 'Quick Note', Icons.edit_note_rounded),
+                  _buildTabItem(2, 'Controls', Icons.tune_rounded),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 12.0),
+
+            // Tab content without Expanded so it lays out cleanly inside the scroll/morph container
+            AnimatedSwitcher(
               duration: CapsuleTheme.fastDuration,
               child: _buildActiveTabContent(),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -105,10 +108,10 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
         onTap: () => setState(() => _activeTab = index),
         child: AnimatedContainer(
           duration: CapsuleTheme.fastDuration,
-          padding: const EdgeInsets.symmetric(vertical: 6.0),
+          padding: const EdgeInsets.symmetric(vertical: 5.5),
           decoration: BoxDecoration(
             color: isSelected ? CapsuleTheme.islandCard : Colors.transparent,
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(7.0),
             border: isSelected
                 ? Border.all(color: CapsuleTheme.subtleBorder)
                 : null,
@@ -118,15 +121,15 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
             children: [
               Icon(
                 icon,
-                size: 14.0,
+                size: 13.0,
                 color: isSelected ? CapsuleTheme.accentCyan : CapsuleTheme.textSecondary,
               ),
-              const SizedBox(width: 6.0),
+              const SizedBox(width: 5.0),
               Text(
                 label,
                 style: TextStyle(
                   color: isSelected ? CapsuleTheme.textPrimary : CapsuleTheme.textSecondary,
-                  fontSize: 12.0,
+                  fontSize: 11.5,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
@@ -152,6 +155,7 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
   Widget _buildSystemMonitorTab() {
     return Column(
       key: const ValueKey('system_tab'),
+      mainAxisSize: MainAxisSize.min,
       children: [
         _buildStatCard(
           title: 'CPU Usage',
@@ -160,7 +164,7 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
           percentage: 0.24,
           accent: CapsuleTheme.accentCyan,
         ),
-        const SizedBox(height: 10.0),
+        const SizedBox(height: 8.0),
         _buildStatCard(
           title: 'RAM Usage',
           value: '8.4 / 32 GB',
@@ -168,7 +172,7 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
           percentage: 0.26,
           accent: CapsuleTheme.accentGreen,
         ),
-        const SizedBox(height: 10.0),
+        const SizedBox(height: 8.0),
         _buildStatCard(
           title: 'GPU Memory',
           value: '3.1 / 16 GB',
@@ -188,10 +192,10 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
     required Color accent,
   }) {
     return Container(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
       decoration: BoxDecoration(
         color: CapsuleTheme.islandCard,
-        borderRadius: BorderRadius.circular(14.0),
+        borderRadius: BorderRadius.circular(12.0),
         border: Border.all(color: CapsuleTheme.subtleBorder),
       ),
       child: Column(
@@ -204,7 +208,7 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
                 title,
                 style: const TextStyle(
                   color: CapsuleTheme.textSecondary,
-                  fontSize: 12.0,
+                  fontSize: 11.5,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -212,28 +216,28 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
                 value,
                 style: TextStyle(
                   color: accent,
-                  fontSize: 13.0,
+                  fontSize: 12.0,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 6.0),
           ClipRRect(
-            borderRadius: BorderRadius.circular(4.0),
+            borderRadius: BorderRadius.circular(3.0),
             child: LinearProgressIndicator(
               value: percentage,
-              minHeight: 4.0,
+              minHeight: 3.5,
               backgroundColor: CapsuleTheme.surfaceHighlight,
               valueColor: AlwaysStoppedAnimation<Color>(accent),
             ),
           ),
-          const SizedBox(height: 6.0),
+          const SizedBox(height: 5.0),
           Text(
             subtitle,
             style: const TextStyle(
               color: CapsuleTheme.textMuted,
-              fontSize: 10.5,
+              fontSize: 10.0,
             ),
           ),
         ],
@@ -244,24 +248,25 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
   Widget _buildQuickNoteTab() {
     return Container(
       key: const ValueKey('note_tab'),
+      height: 210.0,
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         color: CapsuleTheme.islandCard,
-        borderRadius: BorderRadius.circular(14.0),
+        borderRadius: BorderRadius.circular(12.0),
         border: Border.all(color: CapsuleTheme.subtleBorder),
       ),
       child: const TextField(
-        maxLines: null,
-        expands: true,
+        maxLines: 7,
         style: TextStyle(
           color: CapsuleTheme.textPrimary,
-          fontSize: 13.0,
+          fontSize: 12.5,
           height: 1.4,
         ),
         decoration: InputDecoration(
           hintText: 'Type a quick note or task here...\nSaved automatically.',
-          hintStyle: TextStyle(color: CapsuleTheme.textMuted, fontSize: 13.0),
+          hintStyle: TextStyle(color: CapsuleTheme.textMuted, fontSize: 12.5),
           border: InputBorder.none,
+          isDense: true,
         ),
       ),
     );
@@ -270,19 +275,20 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
   Widget _buildQuickControlsTab() {
     return Column(
       key: const ValueKey('controls_tab'),
+      mainAxisSize: MainAxisSize.min,
       children: [
         Row(
           children: [
             Expanded(child: _buildToggleTile('Mute Audio', Icons.volume_up_rounded, false)),
-            const SizedBox(width: 10.0),
+            const SizedBox(width: 8.0),
             Expanded(child: _buildToggleTile('Do Not Disturb', Icons.bedtime_rounded, true)),
           ],
         ),
-        const SizedBox(height: 10.0),
+        const SizedBox(height: 8.0),
         Row(
           children: [
             Expanded(child: _buildToggleTile('Night Light', Icons.wb_sunny_rounded, false)),
-            const SizedBox(width: 10.0),
+            const SizedBox(width: 8.0),
             Expanded(child: _buildToggleTile('Auto-Hide Pill', Icons.visibility_rounded, false)),
           ],
         ),
@@ -292,10 +298,10 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
 
   Widget _buildToggleTile(String title, IconData icon, bool active) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 14.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 12.0),
       decoration: BoxDecoration(
         color: active ? CapsuleTheme.accentCyan.withValues(alpha: 0.12) : CapsuleTheme.islandCard,
-        borderRadius: BorderRadius.circular(14.0),
+        borderRadius: BorderRadius.circular(12.0),
         border: Border.all(
           color: active ? CapsuleTheme.accentCyan.withValues(alpha: 0.4) : CapsuleTheme.subtleBorder,
         ),
@@ -304,16 +310,16 @@ class _MaxExpandedViewState extends State<MaxExpandedView> {
         children: [
           Icon(
             icon,
-            size: 18.0,
+            size: 16.0,
             color: active ? CapsuleTheme.accentCyan : CapsuleTheme.textSecondary,
           ),
-          const SizedBox(width: 10.0),
+          const SizedBox(width: 8.0),
           Expanded(
             child: Text(
               title,
               style: TextStyle(
                 color: active ? CapsuleTheme.textPrimary : CapsuleTheme.textSecondary,
-                fontSize: 12.0,
+                fontSize: 11.5,
                 fontWeight: active ? FontWeight.w600 : FontWeight.w500,
               ),
             ),

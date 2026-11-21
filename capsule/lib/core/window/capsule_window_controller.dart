@@ -15,7 +15,7 @@ class CapsuleWindowController {
 
   // Window bounds allocation to encompass all states without clipping shadows
   static const double maxWindowWidth = 500.0;
-  static const double maxWindowHeight = 420.0;
+  static const double maxWindowHeight = 460.0;
 
   Future<void> initialize() async {
     if (_initialized) return;

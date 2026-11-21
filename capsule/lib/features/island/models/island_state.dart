@@ -19,7 +19,7 @@ enum IslandState {
   /// Expanded card showing interactive controls (e.g. Media Player, Timers)
   expanded(
     width: 390.0,
-    height: 180.0,
+    height: 185.0,
     borderRadius: 32.0,
     topMargin: 14.0,
   ),
@@ -27,7 +27,7 @@ enum IslandState {
   /// Max expand view showing full widgets (e.g. System Monitor, Todo, Notes)
   maxExpanded(
     width: 440.0,
-    height: 360.0,
+    height: 385.0,
     borderRadius: 36.0,
     topMargin: 14.0,
   );
