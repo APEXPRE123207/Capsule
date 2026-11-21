@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/capsule_theme.dart';
+import '../../media/models/lyric_line.dart';
+import '../../media/services/lrc_parser.dart';
+import '../../media/widgets/lyrics_viewer.dart';
 import 'waveform_visualizer.dart';
 
 /// Interactive expanded card view with playback controls and track progress
@@ -19,7 +22,23 @@ class ExpandedCardView extends StatefulWidget {
 
 class _ExpandedCardViewState extends State<ExpandedCardView> {
   bool _isPlaying = true;
+  bool _showLyrics = false;
   double _progress = 0.42;
+
+  // Sample lyrics parsed via LrcParser
+  late final List<LyricLine> _lyrics = LrcParser.parseSyncedLrc('''
+[00:00.00]Starboy - The Weeknd
+[00:15.20]I'm tryna put you in the worst mood, ah
+[00:19.40]P1 cleaner than your church shoes, ah
+[00:23.10]Milli point two just to hurt you, ah
+[00:27.00]All red Lamb' just to tease you, ah
+[00:30.80]None of these toys on lease too, ah
+[00:34.60]Made your whole year in a week too, yah
+[00:38.50]Main bitch out your league too, ah
+[00:42.40]Side bitch out of your league too, ah
+[00:46.20]Look what you've done
+[00:48.10]I'm a motherfuckin' starboy
+''');
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +50,14 @@ class _ExpandedCardViewState extends State<ExpandedCardView> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Top row: Artwork, Track Title, Quick Action Buttons
+            // Top row: Artwork, Track Title, Lyrics Toggle, Quick Action Buttons
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Album Art
                 Container(
-                  width: 46.0,
-                  height: 46.0,
+                  width: 44.0,
+                  height: 44.0,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFF4F46E5), Color(0xFF06B6D4)],
@@ -56,7 +75,7 @@ class _ExpandedCardViewState extends State<ExpandedCardView> {
                   ),
                   child: const Icon(
                     Icons.graphic_eq_rounded,
-                    size: 24.0,
+                    size: 22.0,
                     color: Colors.white,
                   ),
                 ),
@@ -90,10 +109,20 @@ class _ExpandedCardViewState extends State<ExpandedCardView> {
                   ),
                 ),
 
-                // Action buttons (Max Expand & Collapse)
+                // Action buttons: Lyrics toggle, Hub, Collapse
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    IconButton(
+                      icon: Icon(
+                        _showLyrics ? Icons.music_note_rounded : Icons.subtitles_rounded,
+                        size: 18.0,
+                      ),
+                      color: _showLyrics ? CapsuleTheme.accentCyan : CapsuleTheme.textSecondary,
+                      tooltip: _showLyrics ? 'Show Controls' : 'Show Lyrics',
+                      visualDensity: VisualDensity.compact,
+                      onPressed: () => setState(() => _showLyrics = !_showLyrics),
+                    ),
                     IconButton(
                       icon: const Icon(Icons.dashboard_customize_rounded, size: 18.0),
                       color: CapsuleTheme.textSecondary,
@@ -113,104 +142,118 @@ class _ExpandedCardViewState extends State<ExpandedCardView> {
               ],
             ),
 
-            const SizedBox(height: 8.0),
+            const SizedBox(height: 6.0),
 
-            // Progress Bar
-            Row(
-              children: [
-                const Text(
-                  '1:24',
-                  style: TextStyle(
-                    color: CapsuleTheme.textMuted,
-                    fontSize: 10.5,
-                    fontFeatures: [FontFeature.tabularFigures()],
-                  ),
+            // Middle View: Either Lyrics or Playback Controls
+            if (_showLyrics)
+              SizedBox(
+                height: 105.0,
+                child: LyricsViewer(
+                  lyrics: _lyrics,
+                  currentPositionMs: (_progress * 50000).toInt(),
+                  onLineTap: (timeMs) {
+                    setState(() => _progress = (timeMs / 50000.0).clamp(0.0, 1.0));
+                  },
                 ),
-                Expanded(
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight: 3.0,
-                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5.0),
-                      overlayShape: const RoundSliderOverlayShape(overlayRadius: 8.0),
-                      activeTrackColor: CapsuleTheme.accentCyan,
-                      inactiveTrackColor: CapsuleTheme.surfaceHighlight,
-                      thumbColor: Colors.white,
-                    ),
-                    child: Slider(
-                      value: _progress,
-                      onChanged: (val) {
-                        setState(() => _progress = val);
-                      },
+              )
+            else ...[
+              // Progress Bar
+              Row(
+                children: [
+                  const Text(
+                    '1:24',
+                    style: TextStyle(
+                      color: CapsuleTheme.textMuted,
+                      fontSize: 10.5,
+                      fontFeatures: [FontFeature.tabularFigures()],
                     ),
                   ),
-                ),
-                const Text(
-                  '3:50',
-                  style: TextStyle(
-                    color: CapsuleTheme.textMuted,
-                    fontSize: 10.5,
-                    fontFeatures: [FontFeature.tabularFigures()],
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 2.0),
-
-            // Bottom Control Row: Shuffle, Prev, Play/Pause, Next, Waveform
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.shuffle_rounded, size: 18.0),
-                  color: CapsuleTheme.textSecondary,
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () {},
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.skip_previous_rounded, size: 22.0),
-                      color: CapsuleTheme.textPrimary,
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () {},
-                    ),
-                    const SizedBox(width: 4.0),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() => _isPlaying = !_isPlaying);
-                      },
-                      child: Container(
-                        width: 34.0,
-                        height: 34.0,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                          size: 20.0,
-                          color: Colors.black,
-                        ),
+                  Expanded(
+                    child: SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        trackHeight: 3.0,
+                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5.0),
+                        overlayShape: const RoundSliderOverlayShape(overlayRadius: 8.0),
+                        activeTrackColor: CapsuleTheme.accentCyan,
+                        inactiveTrackColor: CapsuleTheme.surfaceHighlight,
+                        thumbColor: Colors.white,
+                      ),
+                      child: Slider(
+                        value: _progress,
+                        onChanged: (val) {
+                          setState(() => _progress = val);
+                        },
                       ),
                     ),
-                    const SizedBox(width: 4.0),
-                    IconButton(
-                      icon: const Icon(Icons.skip_next_rounded, size: 22.0),
-                      color: CapsuleTheme.textPrimary,
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () {},
+                  ),
+                  const Text(
+                    '3:50',
+                    style: TextStyle(
+                      color: CapsuleTheme.textMuted,
+                      fontSize: 10.5,
+                      fontFeatures: [FontFeature.tabularFigures()],
                     ),
-                  ],
-                ),
-                WaveformVisualizer(
-                  color: CapsuleTheme.accentCyan,
-                  height: 14.0,
-                  isPlaying: _isPlaying,
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 2.0),
+
+              // Bottom Control Row: Shuffle, Prev, Play/Pause, Next, Waveform
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.shuffle_rounded, size: 18.0),
+                    color: CapsuleTheme.textSecondary,
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () {},
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.skip_previous_rounded, size: 22.0),
+                        color: CapsuleTheme.textPrimary,
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () {},
+                      ),
+                      const SizedBox(width: 4.0),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() => _isPlaying = !_isPlaying);
+                        },
+                        child: Container(
+                          width: 34.0,
+                          height: 34.0,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                            size: 20.0,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4.0),
+                      IconButton(
+                        icon: const Icon(Icons.skip_next_rounded, size: 22.0),
+                        color: CapsuleTheme.textPrimary,
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                  WaveformVisualizer(
+                    color: CapsuleTheme.accentCyan,
+                    height: 14.0,
+                    isPlaying: _isPlaying,
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
