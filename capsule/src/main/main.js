@@ -1,14 +1,23 @@
 const { app, BrowserWindow, globalShortcut } = require('electron');
+const path = require('path');
+
+// Set dedicated application name and isolated user data directory
+app.name = 'Capsule';
+try {
+  app.setPath('userData', path.join(app.getPath('appData'), 'Capsule'));
+} catch (_) {}
+
 const configManager = require('./configManager');
 const windowManager = require('./windowManager');
 const trayManager = require('./trayManager');
 require('./mediaManager');
 require('./systemIntegration');
 
-// Single instance enforcement
+// Single instance enforcement: if already running, exit second instance cleanly
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
+  process.exit(0);
 } else {
   app.on('second-instance', () => {
     windowManager.show();
