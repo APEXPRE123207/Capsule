@@ -41,9 +41,15 @@ jobs:
           flutter build windows --release
 
       - name: Package Release ZIP
-        working-directory: capsule/build/windows/x64/runner/Release
+        shell: powershell
         run: |
-          Compress-Archive -Path * -DestinationPath ../../../../../capsule-windows-x64.zip
+          $releaseDir = Resolve-Path "capsule/build/windows/*/runner/Release" -ErrorAction SilentlyContinue
+          if (-not $releaseDir) {
+            $releaseDir = Resolve-Path "capsule/build/windows/runner/Release"
+          }
+          Write-Host "Packaging release binaries from: $releaseDir"
+          Compress-Archive -Path "$releaseDir\*" -DestinationPath "$pwd\capsule-windows-x64.zip" -Force
+          Get-Item "$pwd\capsule-windows-x64.zip" | Format-Table Name, Length
 
       - name: Upload Windows Build Artifact
         uses: actions/upload-artifact@v4
