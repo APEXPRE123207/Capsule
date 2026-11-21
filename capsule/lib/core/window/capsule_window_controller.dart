@@ -10,7 +10,6 @@ class CapsuleWindowController {
   CapsuleWindowController._();
   static final CapsuleWindowController instance = CapsuleWindowController._();
 
-  Window? _window;
   bool _initialized = false;
 
   // Window bounds allocation to encompass all states without clipping shadows
@@ -22,31 +21,36 @@ class CapsuleWindowController {
 
     if (!kIsWeb && Platform.isWindows) {
       try {
-        _window = WindowManager.instance.getCurrent();
-        if (_window != null) {
-          _window!.setFrameless(true);
-          _window!.isAlwaysOnTop = true;
-          _window!.isVisibleInTaskbar = false;
-          _window!.hasShadow = false;
-          _window!.backgroundColor = Colors.transparent.toNative();
+        await windowManager.ensureInitialized();
+
+        const windowOptions = WindowOptions(
+          size: Size(maxWindowWidth, maxWindowHeight),
+          center: false,
+          backgroundColor: Colors.transparent,
+          skipTaskbar: true,
+          titleBarStyle: TitleBarStyle.hidden,
+          alwaysOnTop: true,
+        );
+
+        await windowManager.waitUntilReadyToShow(windowOptions, () async {
+          await windowManager.setAsFrameless();
+          await windowManager.setHasShadow(false);
 
           // Center the floating window at top of primary screen
-          final primary = DisplayManager.instance.getPrimary();
-          if (primary != null) {
-            final workArea = primary.workArea.toRect();
-            final posX = workArea.left + (workArea.width - maxWindowWidth) / 2.0;
-            final posY = workArea.top;
+          try {
+            final primary = await screenRetriever.getPrimaryDisplay();
+            final visiblePos = primary.visiblePosition;
+            final visibleSize = primary.visibleSize;
+            if (visiblePos != null && visibleSize != null) {
+              final posX = visiblePos.dx + (visibleSize.width - maxWindowWidth) / 2.0;
+              final posY = visiblePos.dy;
+              await windowManager.setPosition(Offset(posX, posY));
+            }
+          } catch (_) {}
 
-            _window!.bounds = Rect.fromLTWH(
-              posX,
-              posY,
-              maxWindowWidth,
-              maxWindowHeight,
-            ).toNative();
-          }
-
-          _window!.show();
-        }
+          await windowManager.show();
+          await windowManager.focus();
+        });
       } catch (e) {
         debugPrint('[CapsuleWindowController] Window setup notice: $e');
       }
