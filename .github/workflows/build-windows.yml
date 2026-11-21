@@ -5,7 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch: # Allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
   build-windows:
@@ -15,40 +15,31 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          channel: 'stable'
-          cache: true
-
-      - name: Verify Environment
-        run: |
-          flutter doctor -v
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: capsule/package-lock.json
 
       - name: Install Dependencies
         working-directory: capsule
-        run: |
-          flutter pub get
+        run: npm install
 
-      - name: Analyze Code
+      - name: Run Static Syntax Checks
         working-directory: capsule
-        run: |
-          flutter analyze --no-fatal-infos
+        run: npm test
 
-      - name: Build Windows Executable
+      - name: Package Standalone Windows Executable
         working-directory: capsule
-        run: |
-          flutter build windows --release
+        run: npm run package
 
       - name: Package Release ZIP
         shell: powershell
         run: |
-          $releaseDir = Resolve-Path "capsule/build/windows/*/runner/Release" -ErrorAction SilentlyContinue
-          if (-not $releaseDir) {
-            $releaseDir = Resolve-Path "capsule/build/windows/runner/Release"
-          }
-          Write-Host "Packaging release binaries from: $releaseDir"
-          Compress-Archive -Path "$releaseDir\*" -DestinationPath "$pwd\capsule-windows-x64.zip" -Force
+          $distDir = Resolve-Path "capsule/dist/capsule-win32-x64"
+          Write-Host "Packaging release binaries from: $distDir"
+          Compress-Archive -Path "$distDir\*" -DestinationPath "$pwd\capsule-windows-x64.zip" -Force
           Get-Item "$pwd\capsule-windows-x64.zip" | Format-Table Name, Length
 
       - name: Upload Windows Build Artifact

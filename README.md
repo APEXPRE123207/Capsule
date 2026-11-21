@@ -1,37 +1,72 @@
 # Capsule
 
-A modern, sleek floating Dynamic Island for Windows built with Flutter, Rust, and native Windows APIs.
+A sleek, lightweight Windows Dynamic Island desktop application built with **Electron, JavaScript, HTML, and CSS**.
 
 ---
 
 ## 🌟 Overview
 
-**Capsule** brings fluid, organic Dynamic Island interactions to the Windows desktop. Designed with an OLED-black aesthetic, physics-inspired spring curves, and glassmorphic glow, Capsule morphs smoothly between four interaction states:
+**Capsule** brings fluid, organic Dynamic Island interactions to the Windows desktop. Designed with an OLED-black aesthetic, smooth CSS spring transitions, and transparent click-through windowing, Capsule morphs between four interaction states:
 
 ```
 [ Idle Pill ] ──(Hover)──> [ Hover Peek ] ──(Click)──> [ Expanded Card ] ──(Hub Button)──> [ Max Expand Hub ]
-   (210x38)                   (280x48)                     (390x180)                        (440x360)
+   (210x38)                   (290x48)                     (390x185)                        (460x400)
 ```
 
+1. **Idle State (`210x38`)**: Minimal floating pill showing live animated waveform, current track / status, system clock, and weather icon. Transparent click-through allows clicks to pass to underlying desktop apps.
+2. **Hover State (`290x48`)**: Subtle peek view showing album art, scrolling track marquee, quick play/pause, and ambient weather temperature badge.
+3. **Expanded State (`390x185`)**: Media card with album artwork, title, artist, seek/progress bar, media controls (⏮, ⏯, ⏭), master volume slider, minimize (`_`), and a prominent close button (`✕`).
+4. **Max Expand State (`460x400`)**: Full multi-tab dashboard hub:
+   - 🎵 **Music & Lyrics**: Synchronized scrolling lyrics powered by LRCLIB with active line highlighting and playback controls.
+   - 🌤 **Weather**: Open-Meteo real-time weather conditions, humidity, wind speed, UV index, and 3-day forecast.
+   - ⚡ **System Telemetry**: Real-time CPU & RAM usage meters, system uptime, and master volume control.
+   - 🧮 **Toolbox**: Scientific Calculator with arithmetic, trigonometric functions (`sin`, `cos`, `tan`), roots, and powers.
+   - 📋 **Clipboard Manager**: Clipboard history list with 1-click copy-back to clipboard.
+   - 🚀 **App Launcher & File Search**: Quick app launcher grid (Explorer, CMD, Settings, Spotify, etc.) + instant local desktop/documents file search.
+   - ⚙️ **Settings**: Always-on-top toggle, weather city customization, island corner radius slider, and explicit application exit.
+
 ---
 
-## 🏗️ Repository Layout
+## 🛑 Guaranteed Normal Closing & Control
 
-- **[capsule/](capsule/)**: Main Flutter application (Dynamic Island widgets, animations, windowing).
-- **[capsule/native/](capsule/native/)**: Rust backend crate (`capsule_native`) for low-overhead Windows system telemetry & audio transport sessions.
-- **[.github/workflows/build-windows.yml](.github/workflows/build-windows.yml)**: GitHub Actions workflow that compiles and packages the Windows `.exe` and `.zip` automatically.
+Capsule is designed to be completely user-controlled with predictable desktop behavior:
+- **Visible Close Buttons**: Prominent `✕` close buttons are present in both Expanded and Max Expand views.
+- **System Tray Menu**: Right-click the Capsule tray icon and select **Exit Capsule** to immediately terminate the process.
+- **Global Shortcut**: Press `Alt+F4` at any time to close and quit the application cleanly.
+- **Zero Resistance**: No watchdog processes, no shutdown blockers, no zombie services.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Development & Usage
 
-### Local UI Preview (Web / Chrome)
-Preview and test animations with instant hot reload without needing Visual Studio:
+### Prerequisites
+- Node.js (v20+ recommended)
+- npm
+
+### Running Locally
 ```powershell
 cd capsule
-flutter pub get
-flutter run -d chrome
+npm install
+npm start
 ```
 
-### Windows Desktop Build (GitHub Actions)
-Push changes to `main` or trigger the workflow manually in the Actions tab. GitHub Actions compiles the Windows x64 release and attaches `capsule-windows-x64.zip` to the build artifacts.
+### Static Checks
+```powershell
+npm test
+```
+
+### Building Standalone Executable
+```powershell
+npm run package
+```
+This produces a portable Windows executable in `capsule/dist/capsule-win32-x64/`.
+
+---
+
+## 🏗️ Automated GitHub Actions CI/CD
+
+Every push to `main` triggers [.github/workflows/build-windows.yml](.github/workflows/build-windows.yml), which:
+1. Installs Node.js dependencies
+2. Runs static syntax tests
+3. Packages the standalone Windows x64 executable
+4. Generates and uploads `capsule-windows-x64.zip` as a downloadable artifact.
