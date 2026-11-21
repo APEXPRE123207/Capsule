@@ -1,0 +1,84 @@
+name: Build Capsule Windows Desktop App
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Windows Application
+    runs-on: windows-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Set up Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo Dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: 'src-tauri -> target'
+
+      - name: Install NPM Dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Prepare Native Resources
+        run: npm run plugins:build
+
+      - name: Build Web Application
+        run: npm run build:web
+
+      - name: Build Capsule with Tauri
+        run: npx @tauri-apps/cli build
+
+      - name: Package Windows Artifacts
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "./release-dist" | Out-Null
+
+          # Copy standalone executable
+          if (Test-Path "src-tauri/target/release/capsule.exe") {
+            Copy-Item "src-tauri/target/release/capsule.exe" -Destination "./release-dist/" -Force
+            Write-Host "Found standalone executable: capsule.exe"
+          }
+
+          # Copy NSIS installer if generated
+          $installers = @(Get-ChildItem -Path "src-tauri/target/release/bundle/nsis" -Filter "*-setup.exe" -ErrorAction SilentlyContinue)
+          if ($installers.Count -gt 0) {
+            foreach ($inst in $installers) {
+              Copy-Item $inst.FullName -Destination "./release-dist/" -Force
+              Write-Host "Found NSIS installer: $($inst.Name)"
+            }
+          }
+
+          # Verify at least one binary was packaged
+          $distFiles = Get-ChildItem -Path "./release-dist"
+          if ($distFiles.Count -eq 0) {
+            throw "No build output files found in release directory!"
+          }
+
+          Write-Host "Packaging build artifacts into capsule-windows-x64.zip..."
+          Compress-Archive -Path "./release-dist/*" -DestinationPath "./capsule-windows-x64.zip" -Force
+          Get-Item "./capsule-windows-x64.zip" | Format-Table Name, Length
+
+      - name: Upload Windows Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: capsule-windows-x64
+          path: capsule-windows-x64.zip
+          retention-days: 14

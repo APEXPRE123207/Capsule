@@ -1,0 +1,521 @@
+/*
+ * eIsland - A sleek, Apple Dynamic Island inspired floating widget for Windows, built with Electron.
+ * https://github.com/JNTMTMTM/eIsland
+ *
+ * Copyright (C) 2026 JNTMTMTM
+ * Copyright (C) 2026 pyisland.com
+ *
+ * Original author: JNTMTMTM[](https://github.com/JNTMTMTM)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+mod state;
+use self::state::Sessions;
+use crate::features::windowing as windows;
+use crate::shared::Result;
+use crate::state::Desktop;
+use serde_json::{json, Value};
+use std::sync::{
+    atomic::{AtomicBool, AtomicU64, Ordering},
+    Arc, Mutex,
+};
+use tauri::{AppHandle, Emitter, Manager};
+
+pub struct Media {
+    stopped: Arc<AtomicBool>,
+    sessions: Mutex<Sessions>,
+    unsubscribe_ms: AtomicU64,
+    #[cfg(windows)]
+    api: Mutex<Option<Arc<crate::infrastructure::platform::smtc::Api>>>,
+    #[cfg(windows)]
+    command_gate: Mutex<()>,
+    #[cfg(windows)]
+    command_slots: Arc<tokio::sync::Semaphore>,
+}
+impl Media {
+    #[cfg(debug_assertions)]
+    pub fn diagnostics(&self) -> Value {
+        #[cfg(windows)]
+        let ready = self.api.lock().unwrap().is_some();
+        #[cfg(not(windows))]
+        let ready = false;
+        let sessions = self.sessions.lock().unwrap();
+        json!({"ready":ready,"error":sessions.error,"sessionCount":sessions.entries.len(),"unsubscribeMs":self.unsubscribe_ms.load(Ordering::Acquire)})
+    }
+    pub fn new() -> Self {
+        Self {
+            stopped: Arc::new(AtomicBool::new(false)),
+            sessions: Mutex::new(Sessions::new(Vec::new())),
+            unsubscribe_ms: AtomicU64::new(0),
+            #[cfg(windows)]
+            api: Mutex::new(None),
+            #[cfg(windows)]
+            command_gate: Mutex::new(()),
+            #[cfg(windows)]
+            command_slots: Arc::new(tokio::sync::Semaphore::new(16)),
+        }
+    }
+    pub fn set_unsubscribe_ms(&self, milliseconds: u64) {
+        self.unsubscribe_ms.store(milliseconds, Ordering::Release);
+    }
+    /// 状态变更与事件发布共用会话锁，避免旧快照在新的暂停事件之后发出。
+    fn publish_update<T>(
+        &self,
+        update: impl FnOnce(&mut Sessions) -> (T, Option<Value>),
+        publish: impl FnOnce(Value) -> Result<()>,
+    ) -> Result<T> {
+        let mut sessions = self.sessions.lock().unwrap();
+        let (result, payload) = update(&mut sessions);
+        if let Some(payload) = payload {
+            publish(payload)?;
+        }
+        Ok(result)
+    }
+    fn update(&self, app: &AppHandle, changes: &[Value], full: bool) -> Result<()> {
+        // 恢复被业务 TTL 清理的会话，读取原生监控线程已合并的元数据和封面。
+        #[cfg(windows)]
+        let incoming = {
+            let sessions = self.sessions.lock().unwrap();
+            let api = self.api.lock().unwrap().clone();
+            changes
+                .iter()
+                .map(|change| {
+                    let mut change = change.clone();
+                    if !full && change["removed"] != true && change["mediaChanged"] != true {
+                        if let Some(id) = change["sourceAppId"]
+                            .as_str()
+                            .filter(|id| !sessions.entries.contains_key(*id))
+                        {
+                            if let Some(snapshot) =
+                                api.as_ref().and_then(|api| api.session_snapshot(id))
+                            {
+                                change["mediaChanged"] = json!(true);
+                                change["artworkChanged"] = json!(true);
+                                change["thumbnail"] = snapshot["media"]["thumbnail"].clone();
+                                change["media"] = snapshot["media"].clone();
+                            }
+                        }
+                    }
+                    change
+                })
+                .collect::<Vec<_>>()
+        };
+        #[cfg(windows)]
+        let changes = incoming.as_slice();
+        if changes.is_empty() && !full {
+            return Ok(());
+        }
+        let request = self.publish_update(|sessions| {
+            sessions.set_unsubscribe_ms(self.unsubscribe_ms.load(Ordering::Acquire));
+            let before = sessions.summary();
+            let pending_before = sessions.pending.clone();
+            sessions.apply(changes, full);
+            let after = sessions.summary();
+            let media_changed = full
+                || changes.iter().any(|c| {
+                    c["sourceAppId"] == sessions.current
+                        && (c["mediaChanged"] == true || c["artworkChanged"] == true)
+                });
+            let source_changed = before["deviceId"] != after["deviceId"];
+            let resumed = before["isPlaying"] != true && after["isPlaying"] == true;
+            let outbound = if before != after || media_changed {
+                Some(if media_changed || source_changed || resumed {
+                    sessions.payload()
+                } else {
+                    after
+                })
+            } else {
+                None
+            };
+            let request = if !sessions.pending.is_empty() && sessions.pending != pending_before {
+                sessions.entries.get(&sessions.pending).map(|entry| {
+                    json!({"sourceAppId":sessions.pending,"title":entry["media"]["title"],"artist":entry["media"]["artist"]})
+                })
+            } else {
+                None
+            };
+            (request, outbound)
+        }, |outbound| publish(app, outbound))?;
+        if let Some(request) = request {
+            windows::emit(app, "main", "media:source-switch-request", json!([request]))?;
+        }
+        Ok(())
+    }
+    pub fn start(self: &Arc<Self>, app: &AppHandle) {
+        let stopped = self.stopped.clone();
+        self.sessions.lock().unwrap().whitelist = whitelist(app);
+        let ttl = app
+            .state::<Desktop>()
+            .store
+            .lock()
+            .unwrap()
+            .value("music-smtc-unsubscribe-ms", json!(0));
+        let ttl = ttl
+            .as_f64()
+            .filter(|value| value.is_finite())
+            .unwrap_or(0.)
+            .round();
+        self.set_unsubscribe_ms(if ttl <= 0. {
+            0
+        } else {
+            ttl.clamp(1000., 1_800_000.) as u64
+        });
+        #[cfg(windows)]
+        {
+            let media = self.clone();
+            let app = app.clone();
+            let spawn = std::thread::Builder::new()
+                .name("smtc-monitor".into())
+                .spawn(move || {
+                    let result = (|| -> Result<()> {
+                        let mut monitor = crate::infrastructure::platform::smtc::Monitor::open()?;
+                        monitor.refresh()?;
+                        let api = monitor.api();
+                        *media.api.lock().unwrap() = Some(api.clone());
+                        let result = (|| -> Result<()> {
+                            media.update(&app, &api.snapshot(), true)?;
+                            while !stopped.load(Ordering::Acquire) {
+                                match monitor.wait_for_changes() {
+                                    Ok(changes) => media.update(&app, &changes, false)?,
+                                    Err(error) => eprintln!("[SMTC] Refresh: {error}"),
+                                }
+                            }
+                            Ok(())
+                        })();
+                        *media.api.lock().unwrap() = None;
+                        result
+                    })();
+                    if let Err(error) = result {
+                        let _ = media.publish_update(
+                            |sessions| {
+                                sessions.error = Some(error.clone());
+                                sessions.entries.clear();
+                                sessions.current.clear();
+                                sessions.pending.clear();
+                                ((), Some(Value::Null))
+                            },
+                            |payload| publish(&app, payload),
+                        );
+                        eprintln!("[SMTC] {error}");
+                    }
+                });
+            if let Err(error) = spawn {
+                self.sessions.lock().unwrap().error = Some(error.to_string());
+            }
+        }
+        #[cfg(not(windows))]
+        {
+            let _ = stopped;
+            self.sessions.lock().unwrap().error = Some("SMTC is supported only on Windows".into());
+        }
+    }
+    #[cfg(windows)]
+    async fn command(self: &Arc<Self>, name: &str, argument: Option<f64>) -> Value {
+        let (source, name) = {
+            let s = self.sessions.lock().unwrap();
+            if s.current.is_empty() {
+                return json!({"success":false,"error":s.error.as_deref().unwrap_or("No matching media session")});
+            }
+            let name = if name == "play-pause" {
+                if s.entries.get(&s.current).is_some_and(state::playing) {
+                    "pause"
+                } else {
+                    "play"
+                }
+            } else {
+                name
+            };
+            (s.current.clone(), name.to_owned())
+        };
+        let Some(api) = self.api.lock().unwrap().clone() else {
+            return json!({"success":false,"error":"SMTC is not ready"});
+        };
+        let Ok(slot) = self.command_slots.clone().try_acquire_owned() else {
+            return json!({"success":false,"error":"SMTC command queue is full"});
+        };
+        let media = self.clone();
+        let requested_at = std::time::Instant::now();
+        let operation = tauri::async_runtime::spawn_blocking(move || -> Result<()> {
+            let _slot = slot;
+            let _guard = media.command_gate.lock().unwrap();
+            if requested_at.elapsed() >= std::time::Duration::from_secs(4) {
+                return Err("SMTC command expired".into());
+            }
+            if media.sessions.lock().unwrap().current != source {
+                return Err("Media source changed".into());
+            }
+            api.command(&source, &name, argument)
+        });
+        match tokio::time::timeout(std::time::Duration::from_secs(4), operation).await {
+            Ok(Ok(Ok(()))) => json!({"success":true,"error":null}),
+            Ok(Ok(Err(error))) => json!({"success":false,"error":error}),
+            Ok(Err(error)) => json!({"success":false,"error":error.to_string()}),
+            Err(_) => json!({"success":false,"error":"SMTC command timed out"}),
+        }
+    }
+    #[cfg(not(windows))]
+    async fn command(self: &Arc<Self>, _name: &str, _argument: Option<f64>) -> Value {
+        json!({"success":false,"error":"SMTC is supported only on Windows"})
+    }
+}
+
+/// Manage the media feature before starting its native monitor.
+pub fn start(app: &AppHandle) {
+    let media = Arc::new(Media::new());
+    app.manage(media.clone());
+    media.start(app);
+}
+pub fn stop(app: &AppHandle) {
+    if let Some(media) = app.try_state::<Arc<Media>>() {
+        media.stopped.store(true, Ordering::Release);
+    }
+}
+fn whitelist(app: &AppHandle) -> Vec<String> {
+    app.state::<Desktop>()
+        .store
+        .lock()
+        .unwrap()
+        .value(
+            "music-whitelist",
+            json!(["QQMusic.exe", "cloudmusic.exe", "汽水音乐", "kugou"]),
+        )
+        .as_array()
+        .map(|v| {
+            v.iter()
+                .filter_map(Value::as_str)
+                .map(str::to_owned)
+                .collect()
+        })
+        .unwrap_or_default()
+}
+fn publish(app: &AppHandle, payload: Value) -> Result<()> {
+    app.emit(
+        "eisland-ipc",
+        json!({"channel":"nowplaying:info","args":[payload]}),
+    )
+    .map_err(|e| e.to_string())
+}
+/// 供开发 CLI 读取 Windows 会话，跳过桌面窗口及单实例注册。
+#[cfg(windows)]
+pub(crate) fn run_smtc_cli() -> bool {
+    use crate::infrastructure::platform::smtc;
+    use std::io::Write;
+    let watch = match std::env::args_os()
+        .nth(1)
+        .as_deref()
+        .and_then(std::ffi::OsStr::to_str)
+    {
+        Some("--smtc-sessions") => false,
+        // 开发 CLI 持续读取时复用同一进程，每秒输出一行快照。
+        Some("--smtc-sessions-watch") => true,
+        _ => return false,
+    };
+    let result = if watch {
+        smtc::watch_sessions(std::time::Duration::from_secs(1), |sessions| {
+            let mut stdout = std::io::stdout().lock();
+            writeln!(stdout, "{}", json!(sessions))
+                .and_then(|()| stdout.flush())
+                .is_ok()
+        })
+    } else {
+        smtc::list_sessions().map(|sessions| println!("{}", json!(sessions)))
+    };
+    if let Err(error) = result {
+        eprintln!("[SMTC] {error}");
+        std::process::exit(1);
+    }
+    true
+}
+
+pub fn handles(channel: &str) -> bool {
+    matches!(
+        channel,
+        "media:current-info:get"
+            | "media:play-pause"
+            | "media:next"
+            | "media:prev"
+            | "media:seek"
+            | "smtc:get-timestamp"
+            | "media:accept-source-switch"
+            | "media:reject-source-switch"
+            | "music:detect-source-app-id"
+            | "music:whitelist:get"
+            | "music:whitelist:set"
+    )
+}
+pub async fn handle(app: &AppHandle, channel: &str, args: &[Value]) -> Result<Value> {
+    let media = app.state::<Arc<Media>>().inner().clone();
+    match channel {
+        "media:current-info:get" => Ok(media.sessions.lock().unwrap().payload()),
+        "smtc:get-timestamp" => Ok(media.sessions.lock().unwrap().timestamp()),
+        "music:detect-source-app-id" => {
+            #[cfg(windows)]
+            let api = media.api.lock().unwrap().clone();
+            #[cfg(windows)]
+            if let Some(api) = api {
+                let snapshots = api.snapshot();
+                let sources = snapshots.iter().map(|session| json!({
+                    "sourceAppId":session["sourceAppId"],"isPlaying":state::playing(session),
+                    "hasTitle":session["media"]["title"].as_str().is_some_and(|title| !title.is_empty()),
+                    "thumbnail":session["media"]["thumbnail"],
+                })).collect::<Vec<_>>();
+                return Ok(json!({"ok":!sources.is_empty(),"sources":sources,"message":""}));
+            }
+            let s = media.sessions.lock().unwrap();
+            if let Some(error) = &s.error {
+                return Err(error.clone());
+            }
+            let sources = s.sources();
+            Ok(json!({"ok":!sources.is_empty(),"sources":sources,"message":""}))
+        }
+        "music:whitelist:get" => Ok(json!(media.sessions.lock().unwrap().whitelist)),
+        "music:whitelist:set" => {
+            let list = args
+                .first()
+                .and_then(Value::as_array)
+                .ok_or("Expected a whitelist array")?;
+            let names = list
+                .iter()
+                .map(|v| {
+                    v.as_str()
+                        .map(|s| s.trim().to_owned())
+                        .ok_or("Expected source name")
+                })
+                .collect::<std::result::Result<Vec<_>, _>>()?;
+            let names = names
+                .into_iter()
+                .filter(|s| !s.is_empty())
+                .collect::<Vec<_>>();
+            app.state::<Desktop>()
+                .store
+                .lock()
+                .unwrap()
+                .write("music-whitelist", &json!(names))?;
+            media.publish_update(
+                |s| {
+                    s.whitelist = names.clone();
+                    s.select();
+                    ((), Some(s.payload()))
+                },
+                |payload| {
+                    windows::broadcast(app, "store:music-whitelist", json!(names))?;
+                    publish(app, payload)
+                },
+            )?;
+            Ok(json!(true))
+        }
+        "media:accept-source-switch" | "media:reject-source-switch" => {
+            media.publish_update(
+                |s| {
+                    if channel == "media:accept-source-switch" && s.entries.contains_key(&s.pending)
+                    {
+                        s.current = s.pending.clone();
+                    }
+                    s.pending.clear();
+                    ((), Some(s.payload()))
+                },
+                |payload| publish(app, payload),
+            )?;
+            Ok(Value::Null)
+        }
+        "media:seek" => {
+            let Some(ms) = args
+                .first()
+                .and_then(Value::as_f64)
+                .filter(|v| v.is_finite() && *v >= 0.)
+            else {
+                return Ok(json!({"success":false,"error":"Invalid seek position"}));
+            };
+            Ok(media.command("seek", Some(ms / 1000.)).await)
+        }
+        "media:play-pause" => Ok(media.command("play-pause", None).await),
+        "media:next" => Ok(media.command("next", None).await),
+        "media:prev" => Ok(media.command("previous", None).await),
+        _ => Err("Unknown media operation".into()),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::mpsc;
+    use std::time::Duration;
+
+    #[test]
+    fn pause_cannot_be_overtaken_by_a_delayed_playing_publication() {
+        let media = Arc::new(Media::new());
+        {
+            let mut sessions = media.sessions.lock().unwrap();
+            sessions.whitelist = vec!["music".into()];
+            sessions.apply(
+                &[json!({
+                    "sourceAppId":"music", "media":{"title":"Track"},
+                    "playback":{"playbackStatus":4}
+                })],
+                true,
+            );
+        }
+        let published = Arc::new(Mutex::new(Vec::new()));
+        let (publishing_tx, publishing_rx) = mpsc::channel();
+        let (release_tx, release_rx) = mpsc::channel();
+        let (pausing_tx, pausing_rx) = mpsc::channel();
+        let playing = {
+            let media = media.clone();
+            let published = published.clone();
+            std::thread::spawn(move || {
+                media.publish_update(
+                    |sessions| ((), Some(sessions.payload())),
+                    |payload| {
+                        publishing_tx.send(()).unwrap();
+                        release_rx.recv_timeout(Duration::from_secs(5)).unwrap();
+                        published.lock().unwrap().push(payload);
+                        Ok(())
+                    },
+                )
+            })
+        };
+        publishing_rx.recv_timeout(Duration::from_secs(5)).unwrap();
+        // 模拟设置/切源事件发送较慢，暂停必须等待这次发布结束。
+        assert!(media.sessions.try_lock().is_err());
+        let paused = {
+            let media = media.clone();
+            let published = published.clone();
+            std::thread::spawn(move || {
+                pausing_tx.send(()).unwrap();
+                media.publish_update(
+                    |sessions| {
+                        sessions.apply(
+                            &[json!({
+                                "sourceAppId":"music", "playback":{"playbackStatus":5}
+                            })],
+                            false,
+                        );
+                        ((), Some(sessions.summary()))
+                    },
+                    |payload| {
+                        published.lock().unwrap().push(payload);
+                        Ok(())
+                    },
+                )
+            })
+        };
+        pausing_rx.recv_timeout(Duration::from_secs(5)).unwrap();
+        release_tx.send(()).unwrap();
+        playing.join().unwrap().unwrap();
+        paused.join().unwrap().unwrap();
+        let published = published.lock().unwrap();
+        assert_eq!(published.len(), 2);
+        assert_eq!(published[0]["isPlaying"], true);
+        assert_eq!(published[1]["isPlaying"], false);
+        assert_eq!(media.sessions.lock().unwrap().payload()["isPlaying"], false);
+    }
+}

@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": [
+    "src/renderer/**/*",
+    "src/shared/**/*",
+    "src/tauri/**/*.ts"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "paths": {
+      "@/*": [
+        "./src/renderer/*"
+      ]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": [
+    "vite.config.ts",
+    "scripts/**/*.ts"
+  ],
+  "exclude": [
+    "scripts/fixtures/**"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true,
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "allowImportingTsExtensions": true
+  }
+}

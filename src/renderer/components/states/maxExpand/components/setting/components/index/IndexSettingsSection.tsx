@@ -1,0 +1,247 @@
+/*
+ * eIsland - A sleek, Apple Dynamic Island inspired floating widget for Windows, built with Electron.
+ * https://github.com/JNTMTMTM/eIsland
+ *
+ * Copyright (C) 2026 JNTMTMTM
+ * Copyright (C) 2026 pyisland.com
+ *
+ * Original author: JNTMTMTM[](https://github.com/JNTMTMTM)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+/**
+ * @file IndexSettingsSection.tsx
+ * @description 设置页面 - 总览导航配置区块
+ * @author 鸡哥
+ */
+
+import { memo, useState, type MutableRefObject, type ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
+import useIslandStore from '../../../../../../../store/slices';
+import { QuestionnaireBanner, useAnnouncementQuestionnaire } from '../../../../../../../components/components/DynamicIslandQuestionnaireBanner';
+import { type AppSettingsPageKey, type MusicSettingsPageKey, type AiSettingsPageKey, type NetworkSettingsPageKey, type SettingsSidebarTabKey } from '../../utils/settingsConfig';
+import IndexSettingsSearch from './indexSettingsSearch';
+import '../../../../../../../styles/announcement/announcement.css';
+
+interface IndexNavCard {
+  id: string;
+  label: string;
+  desc: string;
+  icon?: string;
+  tab: SettingsSidebarTabKey;
+  appPage?: AppSettingsPageKey;
+  musicPage?: MusicSettingsPageKey;
+  actionId?: string;
+}
+
+interface IndexSettingsSectionProps {
+  visibleCards: IndexNavCard[];
+  hiddenCards: Array<{ id: string; label: string }>;
+  navEditMode: boolean;
+  navOrder: string[];
+  hiddenNavOrder: string[];
+  dragIdxRef: MutableRefObject<number | null>;
+  setNavOrder: (order: string[]) => void;
+  setHiddenNavOrder: (order: string[]) => void;
+  setNavEditMode: (value: boolean) => void;
+  resetNavConfig: () => void;
+  persistNavConfig: (visible: string[], hidden: string[]) => void;
+  setAppSettingsPage: (page: AppSettingsPageKey) => void;
+  setMusicSettingsPage: (page: MusicSettingsPageKey) => void;
+  setAiSettingsPage?: (page: AiSettingsPageKey) => void;
+  setNetworkSettingsPage?: (page: NetworkSettingsPageKey) => void;
+  setActiveTab: (tab: SettingsSidebarTabKey) => void;
+  onAction?: (actionId: string) => void;
+}
+
+/**
+ * 渲染设置总览导航区块
+ * @param props - 总览导航配置参数
+ * @returns 总览导航设置区域
+ */
+export const IndexSettingsSection = memo(({
+  visibleCards,
+  hiddenCards,
+  navEditMode,
+  navOrder,
+  hiddenNavOrder,
+  dragIdxRef,
+  setNavOrder,
+  setHiddenNavOrder,
+  setNavEditMode,
+  resetNavConfig,
+  persistNavConfig,
+  setAppSettingsPage,
+  setMusicSettingsPage,
+  setAiSettingsPage,
+  setNetworkSettingsPage,
+  setActiveTab,
+  onAction,
+}: IndexSettingsSectionProps): ReactElement => {
+  const { t } = useTranslation();
+  const setQuestionnaire = useIslandStore((state) => state.setQuestionnaire);
+  const questionnaireReminder = useAnnouncementQuestionnaire();
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
+  const getCardOutlineClass = (cardId: string): string => {
+    if (cardId === 'user-pro') return ' settings-user-pro-nav-card--outline';
+    if (cardId === 'user-recharge') return ' settings-user-recharge-nav-card--outline';
+    return '';
+  };
+  const getCardLabel = (card: IndexNavCard): string => t(`settings.nav.${card.id}.label`, { defaultValue: card.label });
+  const getCardDesc = (card: IndexNavCard): string => t(`settings.nav.${card.id}.desc`, { defaultValue: card.desc });
+
+  return (
+    <div className="max-expand-settings-section settings-index-section">
+      <div className="settings-index-header">
+        <div className="max-expand-settings-title">
+          {t('settings.index.title', { defaultValue: '快速导航' })}
+          <button className="settings-nav-edit-btn" type="button" onClick={resetNavConfig}>{t('settings.index.reset', { defaultValue: '恢复默认' })}</button>
+          <button
+            className={`settings-nav-edit-btn ${navEditMode ? 'active' : ''}`}
+            type="button"
+            onClick={() => {
+              if (navEditMode) {
+                persistNavConfig(navOrder, hiddenNavOrder);
+              }
+              setNavEditMode(!navEditMode);
+            }}
+          >
+            {navEditMode
+              ? t('settings.index.done', { defaultValue: '完成' })
+              : t('settings.index.edit', { defaultValue: '编辑' })}
+          </button>
+          <IndexSettingsSearch
+            setAppSettingsPage={setAppSettingsPage}
+            setMusicSettingsPage={setMusicSettingsPage}
+            setAiSettingsPage={setAiSettingsPage}
+            setNetworkSettingsPage={setNetworkSettingsPage}
+            setActiveTab={setActiveTab}
+            onAction={onAction}
+          />
+        </div>
+      </div>
+      {questionnaireReminder.questionnaire && (
+        <div style={{ marginTop: 2 }}>
+          <QuestionnaireBanner
+            count={questionnaireReminder.count}
+            onOpen={setQuestionnaire}
+            onDismiss={questionnaireReminder.dismiss}
+          />
+        </div>
+      )}
+      <div className="settings-index-cards" aria-label={t('settings.index.ariaNav', { defaultValue: '设置快速导航' })}>
+          {visibleCards.map((card, idx) => (
+            navEditMode ? (
+              <div
+                key={card.id}
+                className={`settings-index-card editing${getCardOutlineClass(card.id)}${dragOverIdx === idx ? ' drag-over' : ''}`}
+                draggable
+                onDragStart={(e) => {
+                  dragIdxRef.current = idx;
+                  e.dataTransfer.effectAllowed = 'move';
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOverIdx(idx);
+                }}
+                onDragLeave={() => setDragOverIdx(null)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOverIdx(null);
+                  const from = dragIdxRef.current;
+                  if (from === null || from === idx) return;
+                  const newOrder = visibleCards.map((c) => c.id);
+                  const [moved] = newOrder.splice(from, 1);
+                  newOrder.splice(idx, 0, moved);
+                  setNavOrder(newOrder);
+                }}
+                onDragEnd={() => {
+                  dragIdxRef.current = null;
+                  setDragOverIdx(null);
+                }}
+              >
+                <span className="settings-index-card-drag-handle">⠿</span>
+                <button
+                  className="settings-index-card-remove"
+                  type="button"
+                  onClick={() => {
+                    const nextVisible = navOrder.filter((id) => id !== card.id);
+                    const nextHidden = hiddenNavOrder.includes(card.id) ? hiddenNavOrder : [...hiddenNavOrder, card.id];
+                    setNavOrder(nextVisible);
+                    setHiddenNavOrder(nextHidden);
+                  }}
+                  aria-label={t('settings.index.removeCard', { defaultValue: '删除 {{label}}', label: getCardLabel(card) })}
+                >
+                  −
+                </button>
+                <span className="settings-index-card-title">{getCardLabel(card)}</span>
+                <span className="settings-index-card-desc">{getCardDesc(card)}</span>
+                {card.icon && <img className="settings-index-card-layout-icon" src={card.icon} alt="" aria-hidden="true" />}
+              </div>
+            ) : (
+              <button
+                key={card.id}
+                className={`settings-index-card${getCardOutlineClass(card.id)}`}
+                type="button"
+                onClick={() => {
+                  if (card.actionId && onAction) {
+                    onAction(card.actionId);
+                  } else if (card.appPage) {
+                    setAppSettingsPage(card.appPage);
+                    setActiveTab('app');
+                  } else if (card.musicPage) {
+                    setMusicSettingsPage(card.musicPage);
+                    setActiveTab('music');
+                  } else {
+                    setActiveTab(card.tab);
+                  }
+                }}
+              >
+                <span className="settings-index-card-title">{getCardLabel(card)}</span>
+                <span className="settings-index-card-desc">{getCardDesc(card)}</span>
+                {card.icon && <img className="settings-index-card-layout-icon" src={card.icon} alt="" aria-hidden="true" />}
+              </button>
+            )
+          ))}
+      </div>
+      {navEditMode && (
+        <div className="settings-nav-add-panel" aria-label={t('settings.index.ariaAddPanel', { defaultValue: '可添加导航卡片' })}>
+          <div className="settings-music-label">{t('settings.index.addableTitle', { defaultValue: '可添加卡片' })}</div>
+          {hiddenCards.length === 0 ? (
+            <div className="settings-music-hint">{t('settings.index.emptyAddable', { defaultValue: '当前没有可添加的卡片' })}</div>
+          ) : (
+            <div className="settings-nav-add-list">
+              {hiddenCards.map((card) => (
+                <button
+                  key={card.id}
+                  className="settings-nav-add-item"
+                  type="button"
+                  onClick={() => {
+                    const nextVisible = navOrder.includes(card.id) ? navOrder : [...navOrder, card.id];
+                    const nextHidden = hiddenNavOrder.filter((id) => id !== card.id);
+                    setNavOrder(nextVisible);
+                    setHiddenNavOrder(nextHidden);
+                  }}
+                >
+                  <span>{t(`settings.nav.${card.id}.label`, { defaultValue: card.label })}</span>
+                  <span className="settings-nav-add-plus">+</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+});
+
+IndexSettingsSection.displayName = 'IndexSettingsSection';

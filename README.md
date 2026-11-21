@@ -1,54 +1,53 @@
 # Capsule
 
-A sleek, lightweight Windows Dynamic Island desktop application built with **Electron, JavaScript, HTML, and CSS**.
+A sleek, lightweight Apple Dynamic Island inspired floating widget for Windows, built with native Acrylic/Mica transparency, Web technologies (React, TypeScript, CSS), and Tauri desktop runtime.
 
 ---
 
 ## 🌟 Overview
 
-**Capsule** brings fluid, organic Dynamic Island interactions to the Windows desktop. Designed with an OLED-black aesthetic, smooth CSS spring transitions, and transparent click-through windowing, Capsule morphs between four interaction states:
+**Capsule** brings fluid, organic Dynamic Island interactions to the Windows desktop. Featuring native hardware DWM composition, smooth spring animations, and crystal-clear translucent rounded surfaces without any black box artifacting, Capsule morphs dynamically between four primary states:
 
 ```
-[ Idle Pill ] ──(Hover)──> [ Hover Peek ] ──(Click)──> [ Expanded Card ] ──(Hub Button)──> [ Max Expand Hub ]
-   (210x38)                   (290x48)                     (390x185)                        (460x400)
+[ Idle Pill ] ──(Hover)──> [ Hover Peek ] ──(Click)──> [ Expanded Card ] ──(Expand)──> [ Max Expand Hub ]
 ```
 
-1. **Idle State (`210x38`)**: Minimal floating pill showing live animated waveform, current track / status, system clock, and weather icon. Transparent click-through allows clicks to pass to underlying desktop apps.
-2. **Hover State (`290x48`)**: Subtle peek view showing album art, scrolling track marquee, quick play/pause, and ambient weather temperature badge.
-3. **Expanded State (`390x185`)**: Media card with album artwork, title, artist, seek/progress bar, media controls (⏮, ⏯, ⏭), master volume slider, minimize (`_`), and a prominent close button (`✕`).
-4. **Max Expand State (`460x400`)**: Full multi-tab dashboard hub:
-   - 🎵 **Music & Lyrics**: Synchronized scrolling lyrics powered by LRCLIB with active line highlighting and playback controls.
-   - 🌤 **Weather**: Open-Meteo real-time weather conditions, humidity, wind speed, UV index, and 3-day forecast.
-   - ⚡ **System Telemetry**: Real-time CPU & RAM usage meters, system uptime, and master volume control.
-   - 🧮 **Toolbox**: Scientific Calculator with arithmetic, trigonometric functions (`sin`, `cos`, `tan`), roots, and powers.
-   - 📋 **Clipboard Manager**: Clipboard history list with 1-click copy-back to clipboard.
-   - 🚀 **App Launcher & File Search**: Quick app launcher grid (Explorer, CMD, Settings, Spotify, etc.) + instant local desktop/documents file search.
-   - ⚙️ **Settings**: Always-on-top toggle, weather city customization, island corner radius slider, and explicit application exit.
+1. **Idle State**: Minimal floating pill showing live animated status, clock, and media indicators. Passes mouse clicks through to underlying desktop applications when inactive.
+2. **Hover State**: Subtle peek view showing album art, scrolling track info, quick playback controls, and quick action buttons (hide, quit).
+3. **Expanded State**: Dashboard card with Overview widgets (weather, clock, system status), Music & Lyrics with synchronized scroll, System Performance monitors (CPU, RAM, disk), and Toolbox utilities.
+4. **Max Expand Hub**: Full application dashboard:
+   - 🎵 **Music & Lyrics**: Full lyrics display with synchronized auto-scrolling and playback controls.
+   - 🖼 **Album**: Media artwork viewer and playlist/track info.
+   - 📋 **Clipboard Manager**: Clipboard history manager with instant copy-back.
+   - 🔍 **File Search**: Quick local file and application search.
+   - 🔖 **URL Favorites**: Quick link bookmarks and shortcuts.
+   - 🧮 **Scientific Calculator**: Full scientific arithmetic and functions.
+   - 🛠 **Toolbox**: Unit converter, color picker, and utilities.
+   - ⚙️ **Settings**: Customizable corner radius, startup behavior, position, and styling.
 
 ---
 
-## 🛑 Guaranteed Normal Closing & Control
+## 🛑 Guaranteed Normal Closing & User Control
 
-Capsule is designed to be completely user-controlled with predictable desktop behavior:
-- **Visible Close Buttons**: Prominent `✕` close buttons are present in both Expanded and Max Expand views.
-- **System Tray Menu**: Right-click the Capsule tray icon and select **Exit Capsule** to immediately terminate the process.
-- **Global Shortcut**: Press `Alt+F4` at any time to close and quit the application cleanly.
-- **Zero Resistance**: No watchdog processes, no shutdown blockers, no zombie services.
+Capsule is built to always remain under the user's complete control:
+- **Visible Exit Controls**: Power-off / Quit buttons are accessible in the hover bar, the MaxExpand controls, and the tray menu.
+- **System Tray Menu**: Right-click the Capsule tray icon and select **Quit** to immediately exit and terminate all background workers.
+- **Keyboard Shortcut**: Press `Alt+F4` or close the main window to cleanly exit.
+- **Clean Teardown**: Zero watchdog processes, no auto-restarting loops, no background zombies, and no shutdown blockers.
 
 ---
 
-## 🚀 Running Locally
+## 🔨 Cloud Build via GitHub Actions
 
-### Prerequisites
-- Node.js installed (v20+)
+Capsule is continuously compiled and packaged using GitHub Actions:
+- **Workflow**: `.github/workflows/build.yml`
+- **Runner**: `windows-latest`
+- **Output Artifact**: `capsule-windows-x64.zip` containing both:
+  - `capsule.exe` (Standalone Windows executable)
+  - `Capsule_1.0.0_x64-setup.exe` (NSIS Installer)
 
-### Quick Launch
-```powershell
-cd capsule
-npm start
-```
+---
 
-### Static Checks
-```powershell
-npm test
-```
+## 📜 License
+
+GPL-3.0 License.

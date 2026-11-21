@@ -8,6 +8,7 @@ eisland
 **/node_modules/
 **/dist/
 **/out/
+release-dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
