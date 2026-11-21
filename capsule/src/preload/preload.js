@@ -4,12 +4,13 @@ contextBridge.exposeInMainWorld('capsuleAPI', {
   // Window controls
   exitApp: () => ipcRenderer.send('app-exit'),
   minimizeApp: () => ipcRenderer.send('app-minimize'),
-  setIgnoreMouseEvents: (ignore, options) => {
-    ipcRenderer.send('set-ignore-mouse-events', ignore, options);
-  },
+  setIslandState: (state) => ipcRenderer.send('set-island-state', state),
   setAlwaysOnTop: (flag) => ipcRenderer.invoke('set-always-on-top', flag),
   onToggleIslandState: (callback) => {
     ipcRenderer.on('toggle-island-state', () => callback());
+  },
+  onForceIdleState: (callback) => {
+    ipcRenderer.on('force-idle-state', () => callback());
   },
 
   // Media

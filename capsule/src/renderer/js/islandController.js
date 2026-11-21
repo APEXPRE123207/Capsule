@@ -7,16 +7,8 @@ class IslandController {
   }
 
   init() {
-    // Initial pass-through configuration
-    if (window.capsuleAPI?.setIgnoreMouseEvents) {
-      window.capsuleAPI.setIgnoreMouseEvents(true, { forward: true });
-    }
-
     // Mouse Enter Island
     this.islandElem.addEventListener('mouseenter', () => {
-      if (window.capsuleAPI?.setIgnoreMouseEvents) {
-        window.capsuleAPI.setIgnoreMouseEvents(false);
-      }
       if (this.currentState === 'idle') {
         this.setState('hover');
       }
@@ -26,19 +18,12 @@ class IslandController {
     this.islandElem.addEventListener('mouseleave', () => {
       if (this.currentState === 'hover') {
         this.setState('idle');
-        if (window.capsuleAPI?.setIgnoreMouseEvents) {
-          window.capsuleAPI.setIgnoreMouseEvents(true, { forward: true });
-        }
-      } else if (this.currentState === 'idle') {
-        if (window.capsuleAPI?.setIgnoreMouseEvents) {
-          window.capsuleAPI.setIgnoreMouseEvents(true, { forward: true });
-        }
       }
     });
 
     // Click to Expand from Hover/Idle
     this.islandElem.addEventListener('click', (e) => {
-      // Don't trigger if user clicked an explicit button or input
+      // Don't trigger if user clicked an explicit button, input, or interactive child
       if (e.target.closest('button') || e.target.closest('input')) return;
 
       if (this.currentState === 'idle' || this.currentState === 'hover') {
@@ -46,16 +31,20 @@ class IslandController {
       }
     });
 
+    // Listen for force-idle-state from main process
+    if (window.capsuleAPI?.onForceIdleState) {
+      window.capsuleAPI.onForceIdleState(() => {
+        this.collapseToIdle();
+      });
+    }
+
     // Tray toggle event
     if (window.capsuleAPI?.onToggleIslandState) {
       window.capsuleAPI.onToggleIslandState(() => {
         if (this.currentState === 'idle' || this.currentState === 'hover') {
           this.setState('expanded');
         } else {
-          this.setState('idle');
-          if (window.capsuleAPI?.setIgnoreMouseEvents) {
-            window.capsuleAPI.setIgnoreMouseEvents(true, { forward: true });
-          }
+          this.collapseToIdle();
         }
       });
     }
@@ -66,18 +55,13 @@ class IslandController {
     this.islandElem.classList.add(`state-${newState}`);
     this.currentState = newState;
 
-    if (newState === 'expanded' || newState === 'max-expand') {
-      if (window.capsuleAPI?.setIgnoreMouseEvents) {
-        window.capsuleAPI.setIgnoreMouseEvents(false);
-      }
+    if (window.capsuleAPI?.setIslandState) {
+      window.capsuleAPI.setIslandState(newState);
     }
   }
 
   collapseToIdle() {
     this.setState('idle');
-    if (window.capsuleAPI?.setIgnoreMouseEvents) {
-      window.capsuleAPI.setIgnoreMouseEvents(true, { forward: true });
-    }
   }
 }
 

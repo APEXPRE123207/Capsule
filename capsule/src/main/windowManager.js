@@ -5,26 +5,32 @@ const configManager = require('./configManager');
 class WindowManager {
   constructor() {
     this.mainWindow = null;
-    this.windowWidth = 520;
-    this.windowHeight = 480;
+    this.states = {
+      'idle': { width: 210, height: 44 },
+      'hover': { width: 290, height: 54 },
+      'expanded': { width: 390, height: 195 },
+      'max-expand': { width: 460, height: 410 },
+    };
+    this.currentState = 'idle';
   }
 
   createWindow() {
     const primaryDisplay = screen.getPrimaryDisplay();
     const { workArea } = primaryDisplay;
+    const initialSize = this.states['idle'];
 
-    const x = Math.round(workArea.x + (workArea.width - this.windowWidth) / 2);
-    const y = workArea.y;
+    const x = Math.round(workArea.x + (workArea.width - initialSize.width) / 2);
+    const y = workArea.y + 6;
 
     this.mainWindow = new BrowserWindow({
       x,
       y,
-      width: this.windowWidth,
-      height: this.windowHeight,
+      width: initialSize.width,
+      height: initialSize.height,
       transparent: true,
       frame: false,
       resizable: false,
-      alwaysOnTop: configManager.get('alwaysOnTop'),
+      alwaysOnTop: true,
       skipTaskbar: false,
       hasShadow: false,
       show: false,
@@ -36,11 +42,20 @@ class WindowManager {
       },
     });
 
+    this.mainWindow.setAlwaysOnTop(true, 'screen-saver');
     this.mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
 
     this.mainWindow.once('ready-to-show', () => {
       this.mainWindow.show();
+      this.mainWindow.focus();
     });
+
+    // Fallback ensure show
+    setTimeout(() => {
+      if (this.mainWindow && !this.mainWindow.isDestroyed() && !this.mainWindow.isVisible()) {
+        this.mainWindow.show();
+      }
+    }, 500);
 
     // Handle normal closing cleanly
     this.mainWindow.on('closed', () => {
@@ -50,13 +65,28 @@ class WindowManager {
     this.setupIpc();
   }
 
+  setIslandState(state) {
+    if (!this.mainWindow || this.mainWindow.isDestroyed()) return;
+    const target = this.states[state] || this.states['idle'];
+    this.currentState = state;
+
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const { workArea } = primaryDisplay;
+    const x = Math.round(workArea.x + (workArea.width - target.width) / 2);
+    const y = workArea.y + 6;
+
+    this.mainWindow.setBounds({
+      x,
+      y,
+      width: target.width,
+      height: target.height,
+    }, true);
+  }
+
   setupIpc() {
-    // Mouse transparency / pass-through control
-    ipcMain.on('set-ignore-mouse-events', (event, ignore, options) => {
-      const win = BrowserWindow.fromWebContents(event.sender);
-      if (win && !win.isDestroyed()) {
-        win.setIgnoreMouseEvents(ignore, options || { forward: true });
-      }
+    // Dynamic island state resize & reposition
+    ipcMain.on('set-island-state', (event, state) => {
+      this.setIslandState(state);
     });
 
     // Close application cleanly on request
@@ -67,15 +97,16 @@ class WindowManager {
 
     // Minimize window
     ipcMain.on('app-minimize', () => {
+      this.setIslandState('idle');
       if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-        this.mainWindow.minimize();
+        this.mainWindow.webContents.send('force-idle-state');
       }
     });
 
     // Always on top toggle
     ipcMain.handle('set-always-on-top', (event, flag) => {
       if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-        this.mainWindow.setAlwaysOnTop(flag);
+        this.mainWindow.setAlwaysOnTop(flag, flag ? 'screen-saver' : 'normal');
         configManager.set('alwaysOnTop', flag);
         return true;
       }
@@ -88,6 +119,7 @@ class WindowManager {
       if (this.mainWindow.isMinimized()) this.mainWindow.restore();
       this.mainWindow.show();
       this.mainWindow.focus();
+      this.mainWindow.setAlwaysOnTop(true, 'screen-saver');
     }
   }
 
