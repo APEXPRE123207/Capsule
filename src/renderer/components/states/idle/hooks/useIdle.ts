@@ -30,8 +30,10 @@ import { useTranslation } from 'react-i18next';
 import useIslandStore from '../../../../store/slices';
 import { MUSIC_OUTER_GLOW_EFFECT_STORE_KEY, type IdleContentProps } from '../config/idleConfig';
 import { checkP0Count } from '../utils/checkP0Count';
-import { TODOS_UPDATED_EVENT, STORE_KEY, LOCAL_STORAGE_KEY } from '../../maxExpand/components/todo/config/todoConfig';
 import { padZero } from '../utils/padZero';
+
+const TODOS_UPDATED_EVENT = 'todos-updated';
+const STORE_KEY = 'eisland-todos';
 
 /** Idle 状态交互逻辑 Hook */
 export function useIdle(props: IdleContentProps) {

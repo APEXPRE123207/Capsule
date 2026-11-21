@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Capsule - Dynamic Island desktop application for Windows",
   "license": "GPL-3.0",
+  "type": "module",
   "scripts": {
     "dev": "tauri dev",
     "build": "tauri build",
@@ -12,7 +13,6 @@
     "dev:web": "vite --config vite.config.ts",
     "build:web": "vite build --config vite.config.ts",
     "tauri": "tauri",
-    "plugins:build": "node scripts/native/build-native.mjs",
     "lint": "node scripts/lint/eslint.mjs . --max-warnings=0",
     "lint:eslint": "node scripts/lint/eslint.mjs . --max-warnings=0",
     "lint:report": "node scripts/lint/eslint.mjs . --max-warnings=0 --format html --output-file reports/eslint.html",

@@ -31,17 +31,12 @@ import { buildGradientClockVars, getOverviewClockParts } from '../utils/overview
 import {
   AlbumCarouselWidget,
   BreakReminderWidget,
-  CountdownWidget,
   MokugyoWidget,
   PomodoroWidget,
   ShortcutsWidget,
   SongWidget,
-  TodoWidget,
   UrlFavoritesWidget,
-  WorldClockWidget,
-  AlarmWidget,
   PerformanceMonitorWidget,
-  AgentQuotaWidget,
 } from './OverviewWidgets';
 import type { ReactElement, ReactNode } from 'react';
 import type { OverviewWidgetType } from '../types/overviewTypes';
@@ -113,8 +108,6 @@ export function OverviewTab(): ReactElement {
         return <SongWidget />;
       case 'album':
         return <AlbumCarouselWidget openAlbumPage={() => openTargetPage('album')} />;
-      case 'countdown':
-        return <CountdownWidget openTargetPage={openTargetPage} />;
       case 'pomodoro':
         return <PomodoroWidget />;
       case 'mokugyo':
@@ -123,14 +116,8 @@ export function OverviewTab(): ReactElement {
         return <UrlFavoritesWidget openUrlFavoritesPage={() => openTargetPage('urlFavorites')} />;
       case 'breakReminder':
         return <BreakReminderWidget openBreakReminderPage={() => openTargetPage('settings')} />;
-      case 'worldClock':
-        return <WorldClockWidget onOpenWorldClockPage={openWorldClockPage} />;
-      case 'alarm':
-        return <AlarmWidget onOpenAlarmPage={() => openTargetPage('alarm')} />;
       case 'performanceMonitor':
         return <PerformanceMonitorWidget />;
-      case 'agentQuota':
-        return <AgentQuotaWidget />;
       default:
         return null;
     }

@@ -31,8 +31,6 @@ import type { OverviewLayoutConfig, OverviewWidgetType } from '../../../../../..
 import { PerformanceMetricGrid, type PerformanceWidgetMetrics } from '../../../../../../expand/pages/OverviewTab/components/PerformanceMetricGrid';
 import { SvgIcon } from '../../../../../../../../utils/SvgIcon';
 import { DEFAULT_PERFORMANCE_MONITOR_CHART_COLORS } from '../../../../../../../../utils/performanceMonitorColors';
-import { AGENT_USAGE_PROVIDER_ICONS } from '../../../../../../expand/pages/AgentUsageTab/config/agentUsageConfig';
-import { WorldClockFlag } from '../../../../../components/worldClock/components/WorldClockFlag';
 import type { AgentUsageProviderId } from '../../../../../../../../../tauri/types/agentUsage';
 
 interface PreviewCountdownItem {
@@ -381,45 +379,6 @@ export function OverviewPreview({ layoutConfig }: { layoutConfig: OverviewLayout
           </div>
         );
       }
-      case 'worldClock':
-        return (
-          <div className="ov-dash-widget ov-dash-world-clock-widget">
-            <div className="ov-dash-widget-header">
-              <span className="ov-dash-widget-title">{t('overview.worldClock.title')}</span>
-            </div>
-            <div className="ov-dash-world-clock-list">
-              <div className="ov-dash-world-clock-item">
-                <span className="ov-dash-world-clock-city">{t('overview.worldClock.previewFirstCity')}</span>
-                <span className="ov-dash-world-clock-time">09:41:08</span>
-                <WorldClockFlag countryCode="cn" />
-              </div>
-              <div className="ov-dash-world-clock-item">
-                <span className="ov-dash-world-clock-city">{t('overview.worldClock.previewSecondCity')}</span>
-                <span className="ov-dash-world-clock-time">21:41:08</span>
-                <WorldClockFlag countryCode="us" />
-              </div>
-            </div>
-          </div>
-        );
-      case 'alarm':
-        return (
-          <div className="ov-dash-widget ov-dash-alarm-widget">
-            <div className="ov-dash-widget-header">
-              <span className="ov-dash-widget-title">{t('overview.alarm.title')}</span>
-            </div>
-            <div className="ov-dash-world-clock-list">
-              {['08:00:00', '21:30:00'].map((time) => (
-                <div key={time} className="ov-dash-world-clock-item ov-dash-alarm-item">
-                  <span className="ov-dash-world-clock-city">{t('overview.alarm.title')}</span>
-                  <span className="ov-dash-world-clock-time">{time}</span>
-                  <span className="alarm-toggle ov-dash-alarm-toggle alarm-toggle--on" aria-hidden="true">
-                    <span className="alarm-toggle-track"><span className="alarm-toggle-thumb" /></span>
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
       case 'performanceMonitor':
         return (
           <div className="ov-dash-widget ov-dash-performance-widget">
@@ -429,36 +388,10 @@ export function OverviewPreview({ layoutConfig }: { layoutConfig: OverviewLayout
             <PerformanceMetricGrid metrics={PREVIEW_PERFORMANCE_METRICS} colors={DEFAULT_PERFORMANCE_MONITOR_CHART_COLORS} />
           </div>
         );
+      case 'worldClock':
+      case 'alarm':
       case 'agentQuota':
-        return (
-          <div className="ov-dash-widget ov-dash-agent-quota-widget">
-            <div className="ov-dash-widget-header">
-              <span className="ov-dash-widget-title">{t('overview.agentQuota.title')}</span>
-            </div>
-            <div className="ov-dash-agent-quota-list">
-              {PREVIEW_AGENT_QUOTA.map((item) => (
-                <div key={item.provider} className={`ov-dash-agent-quota-item ov-dash-agent-quota-item--${item.provider}`}>
-                  <div className="ov-dash-agent-quota-head">
-                    <img className="ov-dash-agent-quota-icon" src={AGENT_USAGE_PROVIDER_ICONS[item.provider]} alt="" draggable={false} />
-                    <span className="ov-dash-agent-quota-name">{t(`expanded.agentUsage.providers.${item.provider}`)}</span>
-                    <span className="ov-dash-agent-quota-today">{item.today}</span>
-                  </div>
-                  {item.percent === null
-                    ? <span className="ov-dash-agent-quota-hint">{t('expanded.agentUsage.noQuotaInLogs')}</span>
-                    : (
-                      <div className="ov-dash-agent-quota-row">
-                        <span className="ov-dash-agent-quota-window">{t('expanded.agentUsage.window.fiveHour')}</span>
-                        <div className="ov-dash-agent-quota-track">
-                          <div className="ov-dash-agent-quota-fill" style={{ width: `${item.percent}%` }} />
-                        </div>
-                        <span className="ov-dash-agent-quota-percent">{`${item.percent}%`}</span>
-                      </div>
-                    )}
-                </div>
-              ))}
-            </div>
-          </div>
-        );
+        return null;
       default:
         return null;
     }
