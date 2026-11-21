@@ -1,0 +1,21 @@
+# Ignore reference repository
+eIsland/
+eisland/
+eIsland
+eisland
+
+# Operating System & Editor Files
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+.vscode/
+.idea/
+
+# Flutter / Dart / Rust build artifacts
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/target/

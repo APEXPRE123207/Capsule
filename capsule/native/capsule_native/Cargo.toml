@@ -1,0 +1,18 @@
+[package]
+name = "capsule_native"
+version = "0.1.0"
+edition = "2021"
+description = "Native Rust backend for Capsule Windows Dynamic Island"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+# Windows APIs for system info, windowing, and audio controls
+windows = { version = "0.58", features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_Graphics_Dwm",
+    "Win32_System_SystemInformation",
+    "Media_Control",
+] }

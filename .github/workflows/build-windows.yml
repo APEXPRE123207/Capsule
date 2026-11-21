@@ -1,0 +1,53 @@
+name: Build Windows Desktop App
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Environment
+        run: |
+          flutter doctor -v
+
+      - name: Install Dependencies
+        working-directory: capsule
+        run: |
+          flutter pub get
+
+      - name: Analyze Code
+        working-directory: capsule
+        run: |
+          flutter analyze
+
+      - name: Build Windows Executable
+        working-directory: capsule
+        run: |
+          flutter build windows --release
+
+      - name: Package Release ZIP
+        working-directory: capsule/build/windows/x64/runner/Release
+        run: |
+          Compress-Archive -Path * -DestinationPath ../../../../../capsule-windows-x64.zip
+
+      - name: Upload Windows Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: capsule-windows-x64
+          path: capsule-windows-x64.zip
+          retention-days: 14
