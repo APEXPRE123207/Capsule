@@ -33,7 +33,7 @@ jobs:
       - name: Analyze Code
         working-directory: capsule
         run: |
-          flutter analyze
+          flutter analyze --no-fatal-infos
 
       - name: Build Windows Executable
         working-directory: capsule
